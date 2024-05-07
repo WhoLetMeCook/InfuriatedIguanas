@@ -19,4 +19,20 @@ public class Ground extends Board{
             t.generateTunnel(grid);
         }
     }
+
+    public void setItem(int r, int c, int v) {
+        grid[r][c] = v;
+    }
+
+    public int countItem(int item) {
+        int ans = 0;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == item) {
+                    ans++;
+                }
+            }
+        }
+        return ans;
+    }
 }
