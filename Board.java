@@ -17,7 +17,5 @@ public abstract class Board {
         return col;
     }
 
-    public int getItem(int r, int c) {
-        return board[r][c];
-    }
+    public abstract int getItem(int r, int c);
 }
