@@ -1,5 +1,4 @@
 import java.util.*;
-import TunnelMaker;
 
 /**
  * @author Vincent Qin
@@ -9,8 +8,8 @@ public class Ground extends Board{
     private int[][] grid;
 
     /**
-     * instantiates a 2d array of numbers from 0-3
-     * 0 represents dirt, 1 represents air, 2 represents cannonballs, and 3 represents eggs
+     * instantiates a 2d array of numbers from 0-4
+     * 0 represents dirt, 1 represents air, 2 stone, 3 eggs, and 4 cannonballs
      * @param r number of rows
      * @param c number of columns
      */
@@ -20,6 +19,7 @@ public class Ground extends Board{
 
     /**
      * returns the item at r, c
+     * @return an int 0-3
      */
     public int getItem(int r, int c) {
         return grid[r][c];
@@ -30,9 +30,9 @@ public class Ground extends Board{
      */
     public void reset() {
         Arrays.fill(grid, 0);
-        TunnelMaker t = new TunnelMaker();
+        TunnelMaker t = new TunnelMaker(100, 0.6);
         for (int i = 0; i < 5; i++) { //num tunnels is arbitrary rn
-            t.generateTunnel(grid);
+            t.generateTunnel(this);
         }
     }
 

@@ -2,7 +2,10 @@
  * @author Justin Ji
  * @version 1.0
  */
-public class Tunnel {
+
+ import java.util.*;
+
+public class TunnelMaker {
     private int MX = 0;
     private double PROB = 0;
     /**
@@ -10,7 +13,7 @@ public class Tunnel {
      * @param _MX max # of cells deleted.
      * @param _PROB probability of propagating.
      */
-    public Tunnel(int _MX, int _PROB) {
+    public TunnelMaker(int _MX, double _PROB) {
         MX = _MX;
         PROB = _PROB;
     }
@@ -29,7 +32,7 @@ public class Tunnel {
             }
         }
         int start = (int) (Math.random() * ok.size());
-        Deque<int[]> queue = new Deque<>();
+        Deque<int[]> queue = new ArrayDeque<>();
         queue.push(ok.get(start));
         int[] dr = new int[]{1, -1, 0, 0};
         int[] dc = new int[]{0, 0, -1, 1};
@@ -48,7 +51,7 @@ public class Tunnel {
                 if ((r < 0 || r >= n) || (c < 0 || c >= m)) {
                     continue;
                 }
-                double chance = Math.rand();
+                double chance = Math.random();
                 if (chance < PROB) {
                     queue.addLast(new int[]{r, c});
                 }
