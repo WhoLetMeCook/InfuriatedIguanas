@@ -1,6 +1,6 @@
 
 /**
- * @author Vincent QIn
+ * @author Vincent Qin
  * @author 5/7/24
  * Represents the ammunition of the player to destroy the eggs (GRR)
  */
