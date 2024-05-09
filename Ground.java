@@ -1,11 +1,11 @@
 import java.util.*;
-
 /**
  * @author Vincent Qin
  * @version 1.0
  */
-public class Ground extends Board{
+public class Ground {
     private int[][] grid;
+    private int row, col;
 
     /**
      * instantiates a 2d array of numbers from 0-4
@@ -14,7 +14,9 @@ public class Ground extends Board{
      * @param c number of columns
      */
     public Ground(int r, int c) {
-        super(r, c);
+        row = r;
+        col = c;
+        grid = new int[r][c];
     }
 
     /**
@@ -26,22 +28,37 @@ public class Ground extends Board{
     }
 
     /**
+     * @return # of rows
+     */
+    public int getRow() {
+        return row;
+    }
+
+    /**
+     * @return # of columns
+     */
+    public int getCol() {
+        return col;
+    }
+
+    /**
      * remakes the array using tunnelmaker to generate random tunnels, will add eggs later
      */
     public void reset() {
-        for (int i = 0; i < getRow(); i++) {
-            for (int j = 0; j < getCol(); j++) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
                 grid[i][j] = 0;
             }
         }
         
-        TunnelMaker t = new TunnelMaker(100, 0.6);
-        for (int i = 0; i < 5; i++) { //num tunnels is arbitrary rn
+        TunnelMaker t = new TunnelMaker((row * col) / 7, 0.45);
+        for (int i = 0; i < (int) (row + col) / 10; i++) { //num tunnels is arbitrary rn
             t.generateTunnel(this);
         }
         Random r = new Random();
-        for (int i = 0; i < 3; i++) {
-            grid[r.nextInt(getRow()/2, getRow())][r.nextInt(getCol())] = 3;
+        for (int i = 0; i < 6; i++) {
+            int new_row = (row / 2) + r.nextInt((row + 1) / 2);
+            grid[new_row][r.nextInt(col)] = 3;
         }
     }
 
@@ -76,9 +93,13 @@ public class Ground extends Board{
      * displays the ground as a 2d array
      */
     public void display() {
-        for (int i = 0; i < getRow(); i++) {
-            for (int j = 0; j < getCol(); j++) {
-                System.out.print(grid[i][j] + " ");
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 3) {
+                    System.out.print("\u001B[32m" + "3" + "\u001B[37m" + " ");
+                } else {
+                    System.out.print(grid[i][j] + " ");
+                }
             }
             System.out.println();
         }
