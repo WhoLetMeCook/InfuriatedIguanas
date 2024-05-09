@@ -74,8 +74,9 @@ public class Ground extends Board{
 
     /**
      * displays the ground as a 2d array
+     * for testing purposes
      */
-    public void display() {
+    public void test() {
         for (int i = 0; i < getRow(); i++) {
             for (int j = 0; j < getCol(); j++) {
                 System.out.print(grid[i][j] + " ");
