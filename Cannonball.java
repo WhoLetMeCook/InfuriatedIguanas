@@ -62,4 +62,11 @@ public class Cannonball implements Actor{
         grid.setItem(row, col, 4); //uhh
 
     }
+
+    /**
+     * I'M DOING THIS FOR A REASON
+     */
+    public void drop() {
+        //
+    }
 }
