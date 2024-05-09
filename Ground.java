@@ -29,10 +29,19 @@ public class Ground extends Board{
      * remakes the array using tunnelmaker to generate random tunnels, will add eggs later
      */
     public void reset() {
-        Arrays.fill(grid, 0);
+        for (int i = 0; i < getRow(); i++) {
+            for (int j = 0; j < getCol(); j++) {
+                grid[i][j] = 0;
+            }
+        }
+        
         TunnelMaker t = new TunnelMaker(100, 0.6);
         for (int i = 0; i < 5; i++) { //num tunnels is arbitrary rn
             t.generateTunnel(this);
+        }
+        Random r = new Random();
+        for (int i = 0; i < 3; i++) {
+            grid[r.nextInt(getRow()/2, getRow())][r.nextInt(getCol())] = 3;
         }
     }
 
@@ -61,5 +70,17 @@ public class Ground extends Board{
             }
         }
         return ans;
+    }
+
+    /**
+     * displays the ground as a 2d array
+     */
+    public void display() {
+        for (int i = 0; i < getRow(); i++) {
+            for (int j = 0; j < getCol(); j++) {
+                System.out.print(grid[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 }
