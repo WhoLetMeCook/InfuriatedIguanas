@@ -55,10 +55,8 @@ public class Ground {
         for (int i = 0; i < (int) (row + col) / 10; i++) { //num tunnels is arbitrary rn
             t.generateTunnel(this);
         }
-        Random r = new Random();
         for (int i = 0; i < 6; i++) {
-            int new_row = (row / 2) + r.nextInt((row + 1) / 2);
-            grid[new_row][r.nextInt(col)] = 3;
+            t.placeEgg(this);
         }
     }
 

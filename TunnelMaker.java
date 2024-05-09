@@ -58,7 +58,14 @@ public class TunnelMaker {
             }
         }
     }
-    public void placeEgg() {
-        
+    /**
+     * Marks a location on the grid where an egg should be.
+     */
+    public void placeEgg(Ground grid) {
+        int r = grid.getRow(), c = grid.getCol();
+        Random rand = new Random();
+        int new_row = (r / 2) + rand.nextInt((r + 1) / 2);
+        grid.setItem(new_row, rand.nextInt(c), 3);
+        // add more stuff later
     }
 }
