@@ -91,8 +91,9 @@ public class Ground {
 
     /**
      * displays the ground as a 2d array
+     * for testing purposes
      */
-    public void display() {
+    public void test() {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (grid[i][j] == 3) {

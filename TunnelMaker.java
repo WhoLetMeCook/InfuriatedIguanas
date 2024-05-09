@@ -21,7 +21,7 @@ public class TunnelMaker {
      * Adds a hole at a random location on the grid.
      * @param grid the grid we are editing.
      */
-    void generateTunnel(Ground grid) {
+    public void generateTunnel(Ground grid) {
         int n = grid.getRow(), m = grid.getCol();
         ArrayList<int[]> ok = new ArrayList<>();
         for (int i = 0; i < n; i++) {
@@ -57,5 +57,8 @@ public class TunnelMaker {
                 }
             }
         }
+    }
+    public void placeEgg() {
+        
     }
 }
