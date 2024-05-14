@@ -6,8 +6,8 @@
  import java.util.*;
 
 public class TunnelMaker {
-    private int MX = 0;
-    private double PROB = 0;
+    private final int MX;
+    private final double PROB;
     /**
      * The constructor.
      * @param _MX max # of cells deleted.
@@ -22,17 +22,18 @@ public class TunnelMaker {
      * @param grid the grid we are editing.
      */
     public void generateTunnel(Ground grid) {
-        int n = grid.getRow(), m = grid.getCol();
+        final int n = grid.getRow(), m = grid.getCol();
+        final int lowest = (int) ((2.0 / 3) * n);
         ArrayList<int[]> ok = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                if (grid.getItem(i, j) == 0) {
+                if (grid.getItem(i, j) == 0 && i < lowest) {
                     ok.add(new int[]{i, j});
                 }
             }
         }
         int start = (int) (Math.random() * ok.size());
-        Deque<int[]> queue = new ArrayDeque<>();
+        Deque<int[]> queue = new LinkedList<>();
         queue.push(ok.get(start));
         int[] dr = new int[]{1, -1, 0, 0};
         int[] dc = new int[]{0, 0, -1, 1};
@@ -48,7 +49,7 @@ public class TunnelMaker {
             ++count;
             for (int i = 0; i < 4; i++) {
                 int r = loc[0] + dr[i], c = loc[1] + dc[i];
-                if ((r < 0 || r >= n) || (c < 0 || c >= m)) {
+                if ((r < 0 || r >= lowest) || (c < 0 || c >= m)) {
                     continue;
                 }
                 double chance = Math.random();
@@ -59,13 +60,35 @@ public class TunnelMaker {
         }
     }
     /**
-     * Marks a location on the grid where an egg should be.
+     * Creates a "circular" egg...
      */
     public void placeEgg(Ground grid) {
-        int r = grid.getRow(), c = grid.getCol();
-        Random rand = new Random();
-        int new_row = (r / 2) + rand.nextInt((r + 1) / 2);
-        grid.setItem(new_row, rand.nextInt(c), 3);
-        // add more stuff later
+        final int n = grid.getRow(), m = grid.getCol(),
+                  EGG_DIST = n / 15;
+        final int lowest = (int) ((2.0 / 3) * n);
+        int sr = lowest + (int) (Math.random() * (n / 3)),
+            sc = EGG_DIST + (int) (Math.random() * (n - EGG_DIST * 2));
+        Deque<int[]> queue = new LinkedList<>();
+        queue.addLast(new int[]{sr, sc, 0});
+        int[] dr = new int[]{1, -1, 0, 0};
+        int[] dc = new int[]{0, 0, -1, 1};
+        while (!queue.isEmpty()) {
+            int[] cur = queue.removeFirst();
+            if (grid.getItem(cur[0], cur[1]) >= 3) {
+                continue;
+            }
+            if (cur[2] >= EGG_DIST) {
+                grid.setItem(cur[0], cur[1], 4);
+                continue;
+            } else {
+                grid.setItem(cur[0], cur[1], 3);
+            }
+            for (int i = 0; i < 4; i++) {
+                int r = cur[0] + dr[i], c = cur[1] + dc[i];
+                if (r >= 0 && r < n && c >= 0 && c < m) {
+                    queue.addLast(new int[]{r, c, cur[2] + 1});
+                }
+            }
+        }
     }
 }
