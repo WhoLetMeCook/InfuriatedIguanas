@@ -22,4 +22,12 @@ public class Grid extends JPanel {
             }
         });
     }
+    public Component add(Component comp, int r, int c) {
+        if (objects[r][c] != null) {
+            // MAYBE ADD MESSAGE TO PLAYER THAT AN OBJECT EXISTS AT THIS LOCATION SO CAN'T ADD
+            return comp;
+        }
+        super.add(comp, r, c);
+        return comp;
+    }
 }
