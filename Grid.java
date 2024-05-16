@@ -15,9 +15,4 @@ public class Grid extends JPanel {
         f = new JFrame("Infuriated Iguanas");
         f.setSize(r * 10, c * 10);
     }
-
-    public Component add(Component comp, int r, int c) {
-        super.add(comp, r, c);
-        return comp;
-    }
 }
