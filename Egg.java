@@ -6,16 +6,18 @@
 public class Egg implements Actor {
     private int row;
     private int col;
+    private Grid display;
 
     /**
      * constructs an egg class with its position on the grid
      * @param r row on grid
      * @param c col on grid
      */
-    public Egg(int r, int c, Ground grid) {
+    public Egg(int r, int c, Ground grid, Grid d) {
         row = r;
         col = c;
         grid.setItem(r, c, 3);
+        display = d;
     }
 
     /**
