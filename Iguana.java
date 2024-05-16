@@ -46,7 +46,7 @@ public class Iguana {
      * @param c col
      */
     public void dropCannonball(int loc) {
-        Cannonball drop = new Cannonball(r, loc);
+        Cannonball drop = new Cannonball(row, loc, new Ground(row, loc));
         // FIGURE OUT MATH IG
     }
 }

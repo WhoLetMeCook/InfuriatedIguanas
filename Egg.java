@@ -3,7 +3,7 @@
  * @versiosn 5/7/24
  * Represents an egg class (the target of the player)
  */
-public class Egg implements Actor{
+public class Egg implements Actor {
     private int row;
     private int col;
 

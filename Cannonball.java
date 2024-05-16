@@ -4,7 +4,8 @@
  * @author 5/7/24
  * Represents the ammunition of the player to destroy the eggs (GRR)
  */
-public class Cannonball implements Actor{
+import java.awt.*;
+public class Cannonball extends Component implements Actor {
     private int row;
     private int col;
     private int durability = 3000; //arbitrary
@@ -67,6 +68,10 @@ public class Cannonball implements Actor{
      * I'M DOING THIS FOR A REASON
      */
     public void drop() {
+        //
+    }
+
+    public void display() {
         //
     }
 }
