@@ -6,6 +6,7 @@ import java.util.*;
 public class Ground {
     private int[][] grid;
     private int row, col;
+    private Grid display;
 
     /**
      * instantiates a 2d array of numbers from 0-4
@@ -17,6 +18,7 @@ public class Ground {
         row = r;
         col = c;
         grid = new int[r][c];
+        display = new Grid(r, c, 10, 10);
     }
 
     /**
@@ -98,5 +100,12 @@ public class Ground {
             }
             System.out.println();
         }
+    }
+
+    /**
+     * displays the ground on the GUI
+     */
+    public void show() { // temporary method name until display() deleted
+        //
     }
 }
