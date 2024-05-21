@@ -14,11 +14,11 @@ public class Ground {
      * @param r number of rows
      * @param c number of columns
      */
-    public Ground(int r, int c) {
+    public Ground(int r, int c, int gridr) {
         row = r;
         col = c;
         grid = new int[r][c];
-        display = new Grid(r, c, 10, 10);
+        display = new Grid(gridr, c, 10, 10);
     }
 
     /**
@@ -106,6 +106,11 @@ public class Ground {
      * displays the ground on the GUI
      */
     public void show() { // temporary method name until display() deleted
-        //  
+        int startRow = (int)(display.getSize().getHeight() - row);
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                //
+            }
+        }
     }
 }
