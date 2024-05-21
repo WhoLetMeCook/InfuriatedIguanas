@@ -106,6 +106,6 @@ public class Ground {
      * displays the ground on the GUI
      */
     public void show() { // temporary method name until display() deleted
-        //
+        //  
     }
 }
