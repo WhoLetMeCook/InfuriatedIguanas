@@ -130,6 +130,7 @@ public class Ground extends JPanel {
                     // stone
                 } else if (grid[i][j] == 3) {
                     // egg
+                    //f.add(egg, i, j);
                 } else {
                     // cannonball
                     add(new Cannonball(i + startRow, j, this), i + startRow, j);
