@@ -10,6 +10,14 @@ public class Grid extends JPanel {
     private JFrame f;
     private Component[][] objects;
     private int row, startRow, col;
+    /**
+     * Creates a grid
+     * sr must be > 0 and < r
+     * @param r  # rows
+     * @param sr starting row where ground pops up
+     * @param c # cols
+     * @param sqSize size of a square in the grid
+     */
     public Grid(int r, int sr, int c, int sqSize) {
         row = r;
         startRow = sr;
@@ -19,13 +27,13 @@ public class Grid extends JPanel {
         f.setSize(r * sqSize, c * sqSize);
         objects = new Component[r][c];
         f.addMouseListener(new MouseAdapter() {
-            // if we decide to draw a line for aim we need more complex mouse methods
             public void mouseClicked(MouseEvent e) {
                 // why is there so much math
                 int xc = e.getX(), yc = e.getY();
                 // add cannonball?
                 xc /= sqSize;
                 yc /= sqSize;
+                add(new Cannonball(r, c), xc, yc); // cannonball needs 3rd comp 
             }
         });
     }
