@@ -4,6 +4,6 @@
  */
 public class Game {
     public static void main(String[] args) {
-        Grid display = new Grid(1000, 2000, 10, 10);
+        Ground display = new Ground(1000, 2000, 10, 10);
     }
 }

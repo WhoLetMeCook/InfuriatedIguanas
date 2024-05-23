@@ -1,12 +1,18 @@
-import java.util.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 /**
- * @author Vincent Qin
- * @version 1.0
+ * @author Vincent Qin, I Chen Chou
+ * @version 5/23/24
+ * crazy ground class frfr
  */
-public class Ground {
+public class Ground extends JPanel {
     private int[][] grid;
     private int row, col;
-    private Grid display;
+    private JFrame f;
+    private Component[][] objects;
     private TunnelMaker t;
 
     /**
@@ -14,16 +20,35 @@ public class Ground {
      * 0 represents dirt, 1 represents air, 2 stone, 3 eggs, and 4 cannonballs
      * @param r number of rows
      * @param c number of columns
+     * @param gridr starting row where ground pops up
+     * @param sqSize size of a square in the grid
      */
-    public Ground(int r, int c, int gridr) {
+    public Ground(int r, int c, int gridr, int sqSize) {
         row = r;
         col = c;
         grid = new int[r][c];
-        display = new Grid(gridr, c, 10, 10);
+        objects = new Component[r][c];
         t = new TunnelMaker((row * col) / 7, 0.45);
+
+        setLayout(new GridLayout(r, c));
+        f = new JFrame("Infuriated Iguanas");
+        f.setSize(r * sqSize, c * sqSize);
+        f.add(this);
+        f.setVisible(true);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        f.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int xc = e.getX() / sqSize;
+                int yc = e.getY() / sqSize;
+                add(new Cannonball(0, 0, Ground.this), yc, xc); // Adjust as needed
+            }
+        });
     }
+
     public int getRow() { return row; }
     public int getCol() { return col; }
+
     /**
      * remakes the array using tunnelmaker to generate random tunnels, will add eggs later
      */
@@ -34,7 +59,7 @@ public class Ground {
             }
         }
         
-        for (int i = 0; i < (int) (row + col) / 10; i++) { //num tunnels is arbitrary rn
+        for (int i = 0; i < (int) (row + col) / 10; i++) { // num tunnels is arbitrary rn
             t.generateTunnel(this);
         }
         for (int i = 0; i < 6; i++) {
@@ -51,9 +76,11 @@ public class Ground {
     public void setItem(int r, int c, int v) {
         grid[r][c] = v;
     }
+
     public int getItem(int r, int c) { return grid[r][c]; }
+
     /**
-     * counts a specfic item, will usually be for eggs, sometimes for cannonballs
+     * counts a specific item, will usually be for eggs, sometimes for cannonballs
      * @param item the item to count
      * @return returns the number of items in grid
      */
@@ -73,7 +100,7 @@ public class Ground {
      * displays the ground as a 2d array
      * for testing purposes
      */
-    public void display() {
+    public void displayGrid() {
         for (int i = 0; i < getRow(); i++) {
             for (int j = 0; j < getCol(); j++) {
                 System.out.print(grid[i][j] + " ");
@@ -85,28 +112,51 @@ public class Ground {
     /**
      * displays the ground on the GUI
      */
-    public void show() { // temporary method name until display() deleted
-        int startRow = (int)(display.getSize().getHeight() - row);
+    public void showGrid() {
+        int startRow = (int)(f.getSize().getHeight() / getRow());
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (grid[i][j] == 0) {
                     // display dirt
-                }
-                else if (grid[i][j] == 1) {
+                } else if (grid[i][j] == 1) {
                     // air --> basically do nothing?
-                }
-                else if (grid[i][j] == 2) {
+                } else if (grid[i][j] == 2) {
                     // stone
-                }
-                else if (grid[i][j] == 3) {
+                } else if (grid[i][j] == 3) {
                     // egg
-                }
-                else {
+                } else {
                     // cannonball
-                    display.add(new Cannonball(i + startRow, j, this), i + startRow, j);
+                    add(new Cannonball(i + startRow, j, this), i + startRow, j);
                 }
             }
         }
+    }
+
+    /**
+     * adds a component to the grid at specified row and column
+     * @param comp the component to add
+     * @param r row index
+     * @param c column index
+     * @return the component added
+     */
+    public Component add(Component comp, int r, int c) {
+        if (objects[r][c] != null) {
+            // MAYBE ADD MESSAGE TO PLAYER THAT AN OBJECT EXISTS AT THIS LOCATION SO CAN'T ADD
+            return comp;
+        }
+        objects[r][c] = comp;
+        super.add(comp);
+        revalidate();
+        repaint();
+        return comp;
+    }
+
+    /**
+     * returns the item at r, c
+     * @return the component at the specified location
+     */
+    public Component getItemComponent(int r, int c) {
+        return objects[r][c];
     }
 
     /**
@@ -122,7 +172,6 @@ public class Ground {
                 return;
             }
             cannonball.move(i, c, this);
-
         }
     }
 }
