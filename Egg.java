@@ -7,14 +7,14 @@ import java.awt.Component;
 public class Egg extends Component implements Actor {
     private int row;
     private int col;
-    private Grid display;
+    private Ground display;
 
     /**
      * constructs an egg class with its position on the grid
      * @param r row on grid
      * @param c col on grid
      */
-    public Egg(int r, int c, Ground grid, Grid d) {
+    public Egg(int r, int c, Ground grid, Ground d) {
         row = r;
         col = c;
         grid.setItem(r, c, 3);
