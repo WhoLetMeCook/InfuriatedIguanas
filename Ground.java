@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
  */
 public class Ground extends JPanel {
     private int[][] grid;
-    private int row, col;
+    private int row, sr, col;
     private JFrame f;
     private Component[][] objects;
     private TunnelMaker t;
@@ -19,12 +19,14 @@ public class Ground extends JPanel {
      * instantiates a 2d array of numbers from 0-4
      * 0 represents dirt, 1 represents air, 2 stone, 3 eggs, and 4 cannonballs
      * @param r number of rows
+     * @oaram startRow row where ground appears
      * @param c number of columns
      * @param gridr starting row where ground pops up
      * @param sqSize size of a square in the grid
      */
-    public Ground(int r, int c, int gridr, int sqSize) {
+    public Ground(int r, int c, int startRow, int sqSize) {
         row = r;
+        startRow = sr;
         col = c;
         grid = new int[r][c];
         objects = new Component[r][c];
