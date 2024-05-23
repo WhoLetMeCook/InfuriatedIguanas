@@ -22,28 +22,6 @@ public class Ground {
     }
 
     /**
-     * returns the item at r, c
-     * @return an int 0-3
-     */
-    public int getItem(int r, int c) {
-        return grid[r][c];
-    }
-
-    /**
-     * @return # of rows
-     */
-    public int getRow() {
-        return row;
-    }
-
-    /**
-     * @return # of columns
-     */
-    public int getCol() {
-        return col;
-    }
-
-    /**
      * remakes the array using tunnelmaker to generate random tunnels, will add eggs later
      */
     public void reset() {
