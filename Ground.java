@@ -7,6 +7,7 @@ public class Ground {
     private int[][] grid;
     private int row, col;
     private Grid display;
+    private TunnelMaker t;
 
     /**
      * instantiates a 2d array of numbers from 0-4
@@ -19,6 +20,7 @@ public class Ground {
         col = c;
         grid = new int[r][c];
         display = new Grid(gridr, c, 10, 10);
+        t = new TunnelMaker((row * col) / 7, 0.45);
     }
 
     /**
@@ -53,7 +55,6 @@ public class Ground {
             }
         }
         
-        TunnelMaker t = new TunnelMaker((row * col) / 7, 0.45);
         for (int i = 0; i < (int) (row + col) / 10; i++) { //num tunnels is arbitrary rn
             t.generateTunnel(this);
         }
@@ -134,11 +135,12 @@ public class Ground {
      * @param c col to drop at
      */
     public void dropBall(int c) {
-    Cannonball cannonball = new Cannonball(0, c, this);
+        Cannonball cannonball = new Cannonball(0, c, this);
         for (int i = 0; i < row; i++) {
             cannonball.damage(grid[i][c] + 1);
             if (cannonball.getDurability() <= 0) {
-                //explode(r, c)
+                t.explode(this, i, c);
+                return;
             }
             cannonball.move(i, c, this);
 

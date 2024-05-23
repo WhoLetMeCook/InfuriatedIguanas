@@ -68,21 +68,22 @@ public class TunnelMaker {
         final int lowest = (int) ((2.0 / 3) * n);
         int sr = lowest + (int) (Math.random() * (n / 3)),
             sc = EGG_DIST + (int) (Math.random() * (n - EGG_DIST * 2));
+        grid.setItem(sr, sc, 3);
+    }
+    public void explode(Ground grid, int row, int col) {
         Deque<int[]> queue = new LinkedList<>();
-        queue.addLast(new int[]{sr, sc, 0});
+        queue.addLast(new int[]{row, col, 0});
         int[] dr = new int[]{1, -1, 0, 0};
         int[] dc = new int[]{0, 0, -1, 1};
+        final int DIST = (row + col) / 15;
+        final int n = grid.getRow(), m = grid.getCol();
         while (!queue.isEmpty()) {
             int[] cur = queue.removeFirst();
             if (grid.getItem(cur[0], cur[1]) >= 3) {
                 continue;
             }
-            if (cur[2] >= EGG_DIST) {
-                grid.setItem(cur[0], cur[1], 4);
-                continue;
-            } else {
-                grid.setItem(cur[0], cur[1], 3);
-            }
+            grid.setItem(cur[0], cur[1], 0);
+            if (cur[2] >= DIST) continue;
             for (int i = 0; i < 4; i++) {
                 int r = cur[0] + dr[i], c = cur[1] + dc[i];
                 if (r >= 0 && r < n && c >= 0 && c < m) {
