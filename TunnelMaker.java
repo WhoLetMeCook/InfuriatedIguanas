@@ -79,9 +79,6 @@ public class TunnelMaker {
         final int n = grid.getRow(), m = grid.getCol();
         while (!queue.isEmpty()) {
             int[] cur = queue.removeFirst();
-            if (grid.getItem(cur[0], cur[1]) >= 3) {
-                continue;
-            }
             grid.setItem(cur[0], cur[1], 0);
             if (cur[2] >= DIST) continue;
             for (int i = 0; i < 4; i++) {

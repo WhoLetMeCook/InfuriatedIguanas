@@ -22,7 +22,8 @@ public class Ground {
         display = new Grid(gridr, c, 10, 10);
         t = new TunnelMaker((row * col) / 7, 0.45);
     }
-
+    public int getRow() { return row; }
+    public int getCol() { return col; }
     /**
      * remakes the array using tunnelmaker to generate random tunnels, will add eggs later
      */
@@ -50,7 +51,7 @@ public class Ground {
     public void setItem(int r, int c, int v) {
         grid[r][c] = v;
     }
-
+    public int getItem(int r, int c) { return grid[r][c]; }
     /**
      * counts a specfic item, will usually be for eggs, sometimes for cannonballs
      * @param item the item to count
