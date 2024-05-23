@@ -128,4 +128,20 @@ public class Ground {
             }
         }
     }
+
+    /**
+     * simulates dropping a cannonball at col c
+     * @param c col to drop at
+     */
+    public void dropBall(int c) {
+    Cannonball cannonball = new Cannonball(0, c, this);
+        for (int i = 0; i < row; i++) {
+            cannonball.damage(grid[i][c] + 1);
+            if (cannonball.getDurability() <= 0) {
+                //explode(r, c)
+            }
+            cannonball.move(i, c, this);
+
+        }
+    }
 }
