@@ -15,7 +15,7 @@ public class Grid extends JPanel {
         f.setSize(r * rsize, c * csize);
         objects = new Component[r][c];
         f.addMouseListener(new MouseAdapter() {
-            // if we decide to draw a line for aim requires more complex mouse methods
+            // if we decide to draw a line for aim we need more complex mouse methods
             public void mouseClicked() {
                 // why is there so much math
                 int xc = getX(), yc = getY();
