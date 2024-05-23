@@ -14,7 +14,7 @@ public class Ground extends JPanel {
     private JFrame f;
     private Component[][] objects;
     private TunnelMaker t;
-
+    private Image iguana, egg, ball;
     /**
      * instantiates a 2d array of numbers from 0-4
      * 0 represents dirt, 1 represents air, 2 stone, 3 eggs, and 4 cannonballs
@@ -31,6 +31,10 @@ public class Ground extends JPanel {
         grid = new int[r][c];
         objects = new Component[r][c];
         t = new TunnelMaker((row * col) / 7, 0.45);
+
+        iguana = new ImageIcon("z_infuriated_iguana.png").getImage();
+        egg = new ImageIcon("z_snake_egg.png").getImage();
+        ball = new ImageIcon("z_cannonball.png").getImage();
 
         setLayout(new GridLayout(r, c));
         f = new JFrame("Infuriated Iguanas");
