@@ -15,9 +15,11 @@ public class Grid extends JPanel {
         f.setSize(r * rsize, c * csize);
         objects = new Component[r][c];
         f.addMouseListener(new MouseAdapter() {
+            // if we decide to draw a line for aim requires more complex mouse methods
             public void mouseClicked() {
                 // why is there so much math
                 int xc = getX(), yc = getY();
+                // add cannonball?
                 //
             }
         });
@@ -27,6 +29,7 @@ public class Grid extends JPanel {
             // MAYBE ADD MESSAGE TO PLAYER THAT AN OBJECT EXISTS AT THIS LOCATION SO CAN'T ADD
             return comp;
         }
+        objects[r][c] = comp;
         super.add(comp, r, c);
         return comp;
     }

@@ -1,9 +1,10 @@
 /**
  * @author Vincent Qin
- * @versiosn 5/7/24
+ * @version 5/7/24
  * Represents an egg class (the target of the player)
  */
-public class Egg implements Actor {
+import java.awt.Component;
+public class Egg extends Component implements Actor {
     private int row;
     private int col;
     private Grid display;

@@ -109,7 +109,22 @@ public class Ground {
         int startRow = (int)(display.getSize().getHeight() - row);
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                //
+                if (grid[i][j] == 0) {
+                    // display dirt
+                }
+                else if (grid[i][j] == 1) {
+                    // air --> basically do nothing?
+                }
+                else if (grid[i][j] == 2) {
+                    // stone
+                }
+                else if (grid[i][j] == 3) {
+                    // egg
+                }
+                else {
+                    // cannonball
+                    display.add(new Cannonball(i + startRow, j, this), i + startRow, j);
+                }
             }
         }
     }
