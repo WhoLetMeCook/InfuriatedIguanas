@@ -60,8 +60,7 @@ public class Cannonball extends Component implements Actor {
         grid.setItem(row, col, 1);
         row = r;
         col = c;
-        grid.setItem(row, col, 4); //uhh
-
+        grid.setItem(row, col, 4);
     }
 
     /**

@@ -79,7 +79,7 @@ public class TunnelMaker {
         final int n = grid.getRow(), m = grid.getCol();
         while (!queue.isEmpty()) {
             int[] cur = queue.removeFirst();
-            grid.setItem(cur[0], cur[1], 0);
+            grid.setItem(cur[0], cur[1], 1);
             if (cur[2] >= DIST) continue;
             for (int i = 0; i < 4; i++) {
                 int r = cur[0] + dr[i], c = cur[1] + dc[i];

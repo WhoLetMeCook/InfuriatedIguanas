@@ -11,6 +11,8 @@ public class Ground extends JPanel {
     private TunnelMaker t;
     private Image iguana, egg, ball;
     private int sqSize;
+    private final int EGG_MULT = 6;
+    private final int BALL_MULT = 10;
 
     public Ground(int r, int c, int startRow, int sqSize) {
         row = r;
@@ -34,12 +36,15 @@ public class Ground extends JPanel {
 
         f.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                int xc = e.getX() / sqSize;
-                int yc = e.getY() / sqSize;
-                add(new Cannonball(0, 0, Ground.this), yc, xc); // Adjust as needed
+                int xc = (e.getX() / sqSize) - (BALL_MULT / 2);
+                int yc = (e.getY() / sqSize) - (BALL_MULT / 2);
+                if (xc >= 0 && yc >= 0) {
+                    // add more bounds checking later!
+                    dropBall(xc);
+                }
             }
         });
-        /**
+        /*
          * Could add seed generation?
          */
     }
@@ -47,9 +52,15 @@ public class Ground extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        for (int i = 0; i < sr; i++) {
+            for (int j = 0; j < col; j++) {
+                g.setColor(Color.BLUE);
+                g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
+            }
+        }
         for (int i = sr; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                if (grid[i][j] == 0) {
+                if (grid[i][j] == 0 || grid[i][j] == 3 || grid[i][j] == 4) {
                     g.setColor(new Color(139, 69, 19)); // brown
                     g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
                 }
@@ -58,9 +69,9 @@ public class Ground extends JPanel {
         for (int i = sr; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (grid[i][j] == 3) {  // Egg
-                    g.drawImage(egg, j * sqSize, i * sqSize, sqSize * 15, sqSize * 10, this);
+                    g.drawImage(egg, j * sqSize, i * sqSize, sqSize * EGG_MULT, sqSize * EGG_MULT, this);
                 } else if (grid[i][j] == 4) {  // Cannonball
-                    g.drawImage(ball, j * sqSize, i * sqSize, sqSize, sqSize, this);
+                    g.drawImage(ball, j * sqSize, i * sqSize, sqSize * BALL_MULT, sqSize * BALL_MULT, this);
                 }
             }
         }
@@ -82,12 +93,11 @@ public class Ground extends JPanel {
         for (int i = 0; i < 6; i++) {
             t.placeEgg(this);
         }
-        repaint();  // Ensure the grid is repainted
+        repaint();
     }
 
     public void setItem(int r, int c, int v) {
         grid[r][c] = v;
-        repaint();  // Repaint after setting item
     }
 
     public int getItem(int r, int c) { return grid[r][c]; }
@@ -117,6 +127,7 @@ public class Ground extends JPanel {
         repaint();
     }
 
+    /* 
     public Component add(Component comp, int r, int c) {
         if (objects[r][c] != null) {
             return comp;
@@ -127,6 +138,7 @@ public class Ground extends JPanel {
         repaint();
         return comp;
     }
+    */
 
     public Component getItemComponent(int r, int c) {
         return objects[r][c];
@@ -134,11 +146,14 @@ public class Ground extends JPanel {
 
     public void dropBall(int c) {
         Cannonball cannonball = new Cannonball(0, c, this);
-        for (int i = 0; i < row; i++) {
-            cannonball.damage(grid[i][c] + 1);
-            if (cannonball.getDurability() <= 0) {
-                t.explode(this, i, c);
-                return;
+        for (int i = 0; i < row - BALL_MULT; i++) {
+            for (int j = c; j < c + BALL_MULT; j++) {
+                grid[i][j] = 1;
+                cannonball.damage(grid[i][j] + 1);
+                if (cannonball.getDurability() <= 0) {
+                    // t.explode(this, i, c + (BALL_MULT) / 2);
+                    return;
+                }
             }
             cannonball.move(i, c, this);
             repaint();
