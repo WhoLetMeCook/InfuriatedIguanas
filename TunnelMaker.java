@@ -3,14 +3,14 @@
  * @version 1.0
  */
 
- import java.util.*;
+import java.util.*;
 
 public class TunnelMaker {
     private final int MX;
     private final double PROB;
     /**
      * The constructor.
-     * @param _MX max # of cells deleted.
+     * @param _MX max # of cells deleted in a "bubble"
      * @param _PROB probability of propagating.
      */
     public TunnelMaker(int _MX, double _PROB) {
@@ -64,10 +64,10 @@ public class TunnelMaker {
      */
     public void placeEgg(Ground grid) {
         final int n = grid.getRow(), m = grid.getCol(),
-                  EGG_DIST = n / 15;
+                  EGG_DIST = n / 10;
         final int lowest = (int) ((2.0 / 3) * n);
-        int sr = lowest + (int) (Math.random() * (n / 3)),
-            sc = EGG_DIST + (int) (Math.random() * (n - EGG_DIST * 2));
+        int sr = lowest + (int) (Math.random() * (n / 5)),
+            sc = EGG_DIST + (int) (Math.random() * (m - EGG_DIST * 2));
         grid.setItem(sr, sc, 3);
     }
     public void explode(Ground grid, int row, int col) {
