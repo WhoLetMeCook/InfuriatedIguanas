@@ -1,11 +1,8 @@
-/**
- * @author all
- * @version 5/28/24
- */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Random;
 
 public class Ground extends JPanel {
     private int[][] grid;
@@ -13,10 +10,10 @@ public class Ground extends JPanel {
     private JFrame f;
     private Component[][] objects;
     private TunnelMaker t;
-    private Image iguana, egg, ball;    
+    private Image iguana, egg, ball, explosion;
     private int sqSize;
-    private final int EGG_MULT = 6;
-    private final int BALL_MULT = 3;
+    private final int EGG_MULT = 60;
+    private final int BALL_MULT = 12;
     private final int IGUANA_MULT = 15;
 
     public Ground(int r, int c, int startRow, int sqSize) {
@@ -31,6 +28,7 @@ public class Ground extends JPanel {
         iguana = new ImageIcon("z_infuriated_iguana.png").getImage();
         egg = new ImageIcon("z_snake_egg.png").getImage();
         ball = new ImageIcon("z_cannonball.png").getImage();
+        explosion = new ImageIcon("z_explosion.png").getImage();
 
         setLayout(null);
         f = new JFrame("Infuriated Iguanas");
@@ -49,9 +47,6 @@ public class Ground extends JPanel {
                 }
             }
         });
-        /*
-         * Could add seed generation?
-         */
     }
 
     @Override
@@ -78,22 +73,35 @@ public class Ground extends JPanel {
                     g.drawImage(egg, j * sqSize, i * sqSize, sqSize * EGG_MULT, sqSize * EGG_MULT, this);
                 } else if (grid[i][j] == 4) {  // Cannonball
                     g.drawImage(ball, j * sqSize, i * sqSize, sqSize * BALL_MULT, sqSize * BALL_MULT, this);
+                } else if (grid[i][j] == 5) {  // Explosion
+                    g.drawImage(explosion, j * sqSize - BALL_MULT, i * sqSize, sqSize * BALL_MULT * 2, sqSize * BALL_MULT * 2, this);
                 }
             }
         }
     }
 
-    public int getRow() { return row; }
-    public int getCol() { return col; }
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
 
     public void reset() {
+        Random r = new Random();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
+                double item = r.nextDouble();
+                if (item < 0.995) {
+                    grid[i][j] = 0;
+                } else {
+                    grid[i][j] = 2;
+                }
                 grid[i][j] = 0;
             }
         }
-        
-        for (int i = 0; i < (int) (row + col) / 10; i++) { 
+        for (int i = 0; i < (int) (row + col) / 10; i++) {
             t.generateTunnel(this);
         }
         for (int i = 0; i < 6; i++) {
@@ -106,7 +114,9 @@ public class Ground extends JPanel {
         grid[r][c] = v;
     }
 
-    public int getItem(int r, int c) { return grid[r][c]; }
+    public int getItem(int r, int c) {
+        return grid[r][c];
+    }
 
     public int countItem(int item) {
         int ans = 0;
@@ -133,49 +143,46 @@ public class Ground extends JPanel {
         repaint();
     }
 
-    /* 
-    public Component add(Component comp, int r, int c) {
-        if (objects[r][c] != null) {
-            return comp;
-        }
-        objects[r][c] = comp;
-        super.add(comp);
-        revalidate();
-
-        repaint();
-        return comp;
-    }
-    */
-
     public Component getItemComponent(int r, int c) {
         return objects[r][c];
     }
 
     public void dropBall(int c) {
-        Cannonball cannonball = new Cannonball(0, c, this);
-        for (int i = sr; i < row - BALL_MULT; i++) {
-            for (int j = c; j < c + BALL_MULT && j < col; j++) {
-                cannonball.damage(grid[i][j]);
-                grid[i][j] = 1;
-                if (cannonball.getDurability() <= 0) {
-                    try {
-                        Thread.sleep(3);
-                    }
-                    catch (InterruptedException e) {
-                        return;
-                    }
-                    t.explode(this, i, c + (BALL_MULT) / 2);
+        new Thread(() -> {
+            Cannonball cannonball = new Cannonball(sr, c, this);
+            for (int i = sr; i < row - BALL_MULT; i++) {
+                repaint();
+                try {
+                    Thread.sleep(10); 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                cannonball.damage(grid[i][c + 1]);
+                cannonball.move(i, c, this);
+                System.out.println(cannonball.getDurability()); 
+                if (cannonball.getDurability() <= 0 || cannonball.getRow() >= row) {
+                    t.explode(this, i, c + (BALL_MULT / 2), 12);
+                    displayExplosion(i, c + (BALL_MULT / 2));
                     return;
                 }
+                cannonball.move(i + 1, c, this);
             }
-            cannonball.move(i, c, this);
-            grid[i][c] = 4;
+            t.explode(this, row - BALL_MULT, c + (BALL_MULT / 2), 12);
+            displayExplosion(row - BALL_MULT, c + (BALL_MULT / 2));
+        }).start();
+    }
+
+    private void displayExplosion(int row, int col) {
+        new Thread(() -> {
+            grid[row][col] = 5; 
             repaint();
             try {
-                Thread.sleep(1);
+                Thread.sleep(1000);  
             } catch (InterruptedException e) {
-                return;
+                e.printStackTrace();
             }
-        }
+            grid[row][col] = 1; 
+            repaint();
+        }).start();
     }
 }

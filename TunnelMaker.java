@@ -70,12 +70,12 @@ public class TunnelMaker {
             sc = EGG_DIST + (int) (Math.random() * (m - EGG_DIST * 2));
         grid.setItem(sr, sc, 3);
     }
-    public void explode(Ground grid, int row, int col) {
+    public void explode(Ground grid, int row, int col, int RADIUS) {
         Deque<int[]> queue = new LinkedList<>();
         queue.addLast(new int[]{row, col});
         int[] dr = new int[]{1, -1, 0, 0};
         int[] dc = new int[]{0, 0, -1, 1};
-        final int RADIUS = 3;
+        final int rad = RADIUS;
         final int n = grid.getRow(), m = grid.getCol();
         Set<String> visited = new HashSet<>();
         visited.add(row + "," + col);
@@ -89,7 +89,7 @@ public class TunnelMaker {
                 int r = curRow + dr[i], c = curCol + dc[i];
                 double distance = Math.sqrt((r - row) * (r - row) + (c - col) * (c - col));
                 
-                if (r >= 0 && r < n && c >= 0 && c < m && distance <= RADIUS && !visited.contains(r + "," + c)) {
+                if (r >= 0 && r < n && c >= 0 && c < m && distance <= rad && !visited.contains(r + "," + c)) {
                     queue.addLast(new int[]{r, c});
                     visited.add(r + "," + c);
                 }

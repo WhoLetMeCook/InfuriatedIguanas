@@ -1,6 +1,6 @@
 public class Test {
     public static void main(String[] args) {
-        Ground cur = new Ground(1000, 1000, 200, 1);
+        Ground cur = new Ground(400, 400, 80, 3);
         cur.reset();
     }
 }
