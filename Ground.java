@@ -1,3 +1,7 @@
+/**
+ * @author all
+ * @version 5/28/24
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -13,6 +17,7 @@ public class Ground extends JPanel {
     private int sqSize;
     private final int EGG_MULT = 6;
     private final int BALL_MULT = 10;
+    private final int IGUANA_MULT = 15;
 
     public Ground(int r, int c, int startRow, int sqSize) {
         row = r;
@@ -66,6 +71,7 @@ public class Ground extends JPanel {
                 }
             }
         }
+        g.drawImage(iguana, 0, (sr - IGUANA_MULT) * sqSize, sqSize * IGUANA_MULT, sqSize * IGUANA_MULT, this);
         for (int i = sr; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (grid[i][j] == 3) {  // Egg
