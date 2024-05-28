@@ -50,7 +50,11 @@ public class Cannonball extends Component implements Actor {
      * @param amount to decrease durability by
      */
     public void damage(int amount) {
-        durability -= amount;
+        int dx;
+        if (amount == 0) dx = 0;
+        else if (amount == 1) dx = 1;
+        else dx = durability;
+        durability -= dx;
     }
 
     /**
