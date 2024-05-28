@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.*;
 
 public class Ground extends JPanel {
     private int[][] grid;
@@ -12,7 +13,7 @@ public class Ground extends JPanel {
     private Image iguana, egg, ball;
     private int sqSize;
     private final int EGG_MULT = 6;
-    private final int BALL_MULT = 10;
+    private final int BALL_MULT = 3;
 
     public Ground(int r, int c, int startRow, int sqSize) {
         row = r;
@@ -66,6 +67,16 @@ public class Ground extends JPanel {
                 }
             }
         }
+
+        for (int i = sr; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 2) {
+                    g.setColor(new Color(128, 128, 128)); // gray
+                    g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
+                }
+            }
+        }
+
         for (int i = sr; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (grid[i][j] == 3) {  // Egg
@@ -81,9 +92,16 @@ public class Ground extends JPanel {
     public int getCol() { return col; }
 
     public void reset() {
+        Random r = new Random();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                grid[i][j] = 0;
+                double item = r.nextDouble();
+                if (item < 0.995) {
+                    grid[i][j] = 0;
+                }
+                else {
+                    grid[i][j] = 2;
+                }
             }
         }
         
@@ -150,6 +168,7 @@ public class Ground extends JPanel {
             for (int j = c; j < c + BALL_MULT; j++) {
                 grid[i][j] = 1;
                 cannonball.damage(grid[i][j] + 1);
+                System.out.println(cannonball.getDurability());
                 if (cannonball.getDurability() <= 0) {
                     // t.explode(this, i, c + (BALL_MULT) / 2);
                     return;
