@@ -16,7 +16,7 @@ public class Ground extends JPanel {
     private Image iguana, egg, ball;    
     private int sqSize;
     private final int EGG_MULT = 6;
-    private final int BALL_MULT = 10;
+    private final int BALL_MULT = 3;
     private final int IGUANA_MULT = 15;
 
     public Ground(int r, int c, int startRow, int sqSize) {
@@ -154,16 +154,28 @@ public class Ground extends JPanel {
     public void dropBall(int c) {
         Cannonball cannonball = new Cannonball(0, c, this);
         for (int i = sr; i < row - BALL_MULT; i++) {
-            for (int j = c; j < c + BALL_MULT; j++) {
+            for (int j = c; j < c + BALL_MULT && j < col; j++) {
+                cannonball.damage(grid[i][j]);
                 grid[i][j] = 1;
                 if (cannonball.getDurability() <= 0) {
+                    try {
+                        Thread.sleep(3);
+                    }
+                    catch (InterruptedException e) {
+                        return;
+                    }
                     t.explode(this, i, c + (BALL_MULT) / 2);
                     return;
                 }
             }
             cannonball.move(i, c, this);
+            grid[i][c] = 4;
             repaint();
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                return;
+            }
         }
-        System.out.println(cannonball.getDurability());
     }
 }
