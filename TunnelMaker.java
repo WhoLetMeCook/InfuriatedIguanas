@@ -72,21 +72,29 @@ public class TunnelMaker {
     }
     public void explode(Ground grid, int row, int col) {
         Deque<int[]> queue = new LinkedList<>();
-        queue.addLast(new int[]{row, col, 0});
+        queue.addLast(new int[]{row, col});
         int[] dr = new int[]{1, -1, 0, 0};
         int[] dc = new int[]{0, 0, -1, 1};
-        final int DIST = (row + col) / 15;
+        final int RADIUS = 3;
         final int n = grid.getRow(), m = grid.getCol();
+        Set<String> visited = new HashSet<>();
+        visited.add(row + "," + col);
+        
         while (!queue.isEmpty()) {
             int[] cur = queue.removeFirst();
-            grid.setItem(cur[0], cur[1], 1);
-            if (cur[2] >= DIST) continue;
+            int curRow = cur[0], curCol = cur[1];
+            grid.setItem(curRow, curCol, 1);
+            
             for (int i = 0; i < 4; i++) {
-                int r = cur[0] + dr[i], c = cur[1] + dc[i];
-                if (r >= 0 && r < n && c >= 0 && c < m) {
-                    queue.addLast(new int[]{r, c, cur[2] + 1});
+                int r = curRow + dr[i], c = curCol + dc[i];
+                double distance = Math.sqrt((r - row) * (r - row) + (c - col) * (c - col));
+                
+                if (r >= 0 && r < n && c >= 0 && c < m && distance <= RADIUS && !visited.contains(r + "," + c)) {
+                    queue.addLast(new int[]{r, c});
+                    visited.add(r + "," + c);
                 }
             }
         }
     }
+    
 }

@@ -1,3 +1,7 @@
+/**
+ * @author all
+ * @version 5/28/24
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -9,10 +13,11 @@ public class Ground extends JPanel {
     private JFrame f;
     private Component[][] objects;
     private TunnelMaker t;
-    private Image iguana, egg, ball;
+    private Image iguana, egg, ball;    
     private int sqSize;
     private final int EGG_MULT = 6;
-    private final int BALL_MULT = 3;
+    private final int BALL_MULT = 10;
+    private final int IGUANA_MULT = 15;
 
     public Ground(int r, int c, int startRow, int sqSize) {
         row = r;
@@ -66,6 +71,7 @@ public class Ground extends JPanel {
                 }
             }
         }
+        g.drawImage(iguana, 0, (sr - IGUANA_MULT) * sqSize, sqSize * IGUANA_MULT, sqSize * IGUANA_MULT, this);
         for (int i = sr; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (grid[i][j] == 3) {  // Egg
@@ -147,9 +153,8 @@ public class Ground extends JPanel {
 
     public void dropBall(int c) {
         Cannonball cannonball = new Cannonball(0, c, this);
-        for (int i = 0; i < row - BALL_MULT; i++) {
-            for (int j = c; j < c + BALL_MULT && j < col; j++) {
-                cannonball.damage(grid[i][j]);
+        for (int i = sr; i < row - BALL_MULT; i++) {
+            for (int j = c; j < c + BALL_MULT; j++) {
                 grid[i][j] = 1;
                 if (cannonball.getDurability() <= 0) {
                     t.explode(this, i, c + (BALL_MULT) / 2);
