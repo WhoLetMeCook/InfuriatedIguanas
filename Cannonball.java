@@ -8,7 +8,7 @@ import java.awt.*;
 public class Cannonball extends Component implements Actor {
     private int row;
     private int col;
-    private int durability = 3000; //arbitrary
+    private int durability = 50; //arbitrary
 
     /**
      * Constructs a cannonball with intial position (most likely will be 0, 0 at the cannon)
@@ -50,7 +50,11 @@ public class Cannonball extends Component implements Actor {
      * @param amount to decrease durability by
      */
     public void damage(int amount) {
-        durability -= amount;
+        int dx;
+        if (amount == 0) dx = 0;
+        else if (amount == 1) dx = 1;
+        else dx = durability;
+        durability -= dx;
     }
 
     /**

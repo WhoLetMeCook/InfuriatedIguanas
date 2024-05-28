@@ -13,7 +13,7 @@ public class Ground extends JPanel {
     private JFrame f;
     private Component[][] objects;
     private TunnelMaker t;
-    private Image iguana, egg, ball;
+    private Image iguana, egg, ball;    
     private int sqSize;
     private final int EGG_MULT = 6;
     private final int BALL_MULT = 10;
@@ -152,12 +152,12 @@ public class Ground extends JPanel {
 
     public void dropBall(int c) {
         Cannonball cannonball = new Cannonball(0, c, this);
-        for (int i = 0; i < row - BALL_MULT; i++) {
+        for (int i = sr; i < row - BALL_MULT; i++) {
             for (int j = c; j < c + BALL_MULT; j++) {
                 grid[i][j] = 1;
                 cannonball.damage(grid[i][j] + 1);
                 if (cannonball.getDurability() <= 0) {
-                    // t.explode(this, i, c + (BALL_MULT) / 2);
+                    t.explode(this, i, c + (BALL_MULT) / 2);
                     return;
                 }
             }
