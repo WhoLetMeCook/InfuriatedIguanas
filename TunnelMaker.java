@@ -59,17 +59,6 @@ public class TunnelMaker {
             }
         }
     }
-    /**
-     * Creates a "circular" egg...
-     */
-    public void placeEgg(Ground grid) {
-        final int n = grid.getRow(), m = grid.getCol(),
-                  EGG_DIST = n / 10;
-        final int lowest = (int) ((2.0 / 3) * n);
-        int sr = lowest + (int) (Math.random() * (n / 5)),
-            sc = EGG_DIST + (int) (Math.random() * (m - EGG_DIST * 2));
-        grid.setItem(sr, sc, 3);
-    }
     public void explode(Ground grid, int row, int col, int RADIUS) {
         Deque<int[]> queue = new LinkedList<>();
         queue.addLast(new int[]{row, col});

@@ -11,11 +11,12 @@ public class Ground extends JPanel implements KeyListener {
     private final TunnelMaker t;
     private final Image iguana, egg, ball, explosion;
     private final int sqSize;
-    private final int EGG_MULT = 1009;
+    private final int EGG_MULT = 10;
     private final int BALL_MULT = 12;
     private final int IGUANA_MULT = 60;
     private boolean droppingBall = false;
     private final Image scaledIguana, scaledEgg, scaledBall, scaledExplosion;
+    int dropped = 0;
 
     public Ground(int r, int c, int startRow, int sqSize) {
         row = r;
@@ -72,8 +73,6 @@ public class Ground extends JPanel implements KeyListener {
         f.addKeyListener(this);
         f.setFocusable(true);
         f.requestFocusInWindow();
-
-        reset();
     }
 
     @Override
@@ -101,8 +100,8 @@ public class Ground extends JPanel implements KeyListener {
         for (int i = sr; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 switch (grid[i][j]) {
-                    case 3 -> g.drawImage(scaledEgg, j * sqSize, i * sqSize, this);
-                    case 4 -> g.drawImage(scaledBall, j * sqSize - BALL_MULT - 4, i * sqSize - BALL_MULT - 4, this);
+                    case 3 -> g.drawImage(scaledEgg, (j - EGG_MULT / 2) * sqSize, (i - EGG_MULT / 2) * sqSize, this);
+                    case 4 -> g.drawImage(scaledBall, (j - BALL_MULT / 2) * sqSize, (i - BALL_MULT / 2) * sqSize, this);
                     case 5 -> g.drawImage(scaledExplosion, j * sqSize - BALL_MULT, i * sqSize, this);
                 }
             }
@@ -118,7 +117,6 @@ public class Ground extends JPanel implements KeyListener {
     }
 
     public void reset() {
-        Random r = new Random();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 grid[i][j] = 0;  // Initialize grid with 0 (clear cell)
@@ -133,18 +131,30 @@ public class Ground extends JPanel implements KeyListener {
         for (int i = 0; i < 100; i++) {
             placeEgg();
         }
+    }
 
+    public void startGame() {
+        reset();
         repaint();
+    }
+
+    public void endGame() {
+        displayMessage(new JTextField("Game Over! " + dropped + " cannonballs used."));
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            return;
+        }
+        f.dispatchEvent(new WindowEvent(f, WindowEvent.WINDOW_CLOSING));
     }
 
     private void placeEgg() {
         Random r = new Random();
         int eggRow, eggCol;
         do {
-            eggRow = sr + r.nextInt(row - sr);  // Place eggs only in the brown area
+            eggRow = sr + r.nextInt(row - sr - EGG_MULT * 3);
             eggCol = r.nextInt(col);
-        } while (grid[eggRow][eggCol] != 0);  // Ensure the cell is clear
-
+        } while (grid[eggRow][eggCol] != 0);
         grid[eggRow][eggCol] = 3;  // Place egg
     }
 
@@ -185,8 +195,24 @@ public class Ground extends JPanel implements KeyListener {
         return objects[r][c];
     }
 
+    public void displayMessage(JTextField message) {
+        message.setBounds(150, 100, 200, 30);
+        this.add(message);
+        this.revalidate();
+        this.repaint();
+    }
+    
+    public void removeMessage(JTextField message) {
+        this.remove(message);
+        this.revalidate();
+        this.repaint();
+    }
+
     public void airstrike() {
         new Thread(() -> {
+            JTextField message = new JTextField("Airstrike Inbound!");
+            displayMessage(message);
+    
             for (int i = 0; i < col; i++) {
                 dropBall(i);
                 try {
@@ -195,21 +221,30 @@ public class Ground extends JPanel implements KeyListener {
                     return;
                 }
             }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return;
+            }
+
+            removeMessage(message);
         }).start();
     }
 
     public void dropBall(int c) {
         new Thread(() -> {
-            Cannonball cannonball = new Cannonball(sr, c, this);
-            for (int i = sr; i < row - BALL_MULT; i++) {
+            Cannonball cannonball = new Cannonball(sr - BALL_MULT, c, this);
+            JTextField message = new JTextField("Airstrike Inbound!");
+            displayMessage(message);
+            for (int i = sr - BALL_MULT; i < row - (BALL_MULT / 2); i++) {
                 repaint();
                 try {
                     Thread.sleep(15);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    return;
                 }
 
-                if (c >= 0 && c + 1 < col) {  // Add bounds check
+                if (i >= sr && c >= 0 && c + 1 < col) {
                     cannonball.damage(grid[i][c + 1]);
                 }
 
@@ -230,7 +265,12 @@ public class Ground extends JPanel implements KeyListener {
                 t.explode(this, row - BALL_MULT, c, 7);
                 displayExplosion(row - BALL_MULT, c);
             }
+            removeMessage(message);
         }).start();
+        ++dropped;
+        if (countItem(3) == 0) {
+            endGame();
+        }
     }
 
     private void displayExplosion(int row, int col) {
@@ -239,9 +279,9 @@ public class Ground extends JPanel implements KeyListener {
                 grid[row][col] = 5;
                 repaint();
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    return;
                 }
                 grid[row][col] = 1;
                 repaint();
