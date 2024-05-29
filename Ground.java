@@ -2,12 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
-
 import java.io.File;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 /**
  * @author Vincent Qin, Justin Ji, I-Chen Chou
@@ -20,6 +21,7 @@ public class Ground extends JPanel implements KeyListener {
     private final Component[][] objects;
     private final TunnelMaker t;
     private final Image iguana, egg, ball, explosion;
+    private BufferedImage dirt;
     private final int sqSize;
     private final int EGG_MULT = 10;
     private final int BALL_MULT = 12;
@@ -48,6 +50,14 @@ public class Ground extends JPanel implements KeyListener {
         egg = new ImageIcon("z_snake_egg.png").getImage();
         ball = new ImageIcon("z_cannonball.png").getImage();
         explosion = new ImageIcon("z_explosion.png").getImage();
+        dirt = null;
+        try {
+            dirt = ImageIO.read(new File("z_dirt.png"));
+        }
+        catch (Exception e) {
+
+        }
+
 
         scaledIguana = iguana.getScaledInstance(sqSize * IGUANA_MULT, sqSize * IGUANA_MULT, Image.SCALE_SMOOTH);
         scaledEgg = egg.getScaledInstance(sqSize * EGG_MULT, sqSize * EGG_MULT, Image.SCALE_SMOOTH);
@@ -122,7 +132,8 @@ public class Ground extends JPanel implements KeyListener {
         for (int i = sr; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (grid[i][j] == 0 || grid[i][j] == 3 || grid[i][j] == 4) {
-                    g.setColor(new Color(139, 69, 19));
+                    int rgb = dirt.getRGB(i % 16, j % 16);
+                    g.setColor(new Color(rgb));
                     g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
                 } else if (grid[i][j] == 2) {
                     g.setColor(Color.GRAY);
