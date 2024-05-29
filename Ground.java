@@ -18,7 +18,6 @@ public class Ground extends JPanel implements KeyListener {
     private final int[][] grid;
     private final int row, sr, col;
     private final JFrame f;
-    private final Component[][] objects;
     private final TunnelMaker t;
     private final Image iguana, egg, ball, explosion, nuke;
     private BufferedImage dirt;
@@ -29,7 +28,8 @@ public class Ground extends JPanel implements KeyListener {
     private final int NUKE_MULT = 20;
     private boolean droppingBall = false;
     private final Image scaledIguana, scaledEgg, scaledBall, scaledExplosion, scaledNuke;
-    int dropped = 0;
+    private int droppedBalls = 0, droppedNukes = 0, airstrikes = 0;
+    private JTextField ballMessage, nukeMessage, airstrikeMessage;
 
     /**
      * The constructor for the class.
@@ -44,7 +44,6 @@ public class Ground extends JPanel implements KeyListener {
         col = c;
         this.sqSize = sqSize;
         grid = new int[r][c];
-        objects = new Component[r][c];
         t = new TunnelMaker((row * col) / 7, 0.425);
 
         iguana = new ImageIcon("z_infuriated_iguana.png").getImage();
@@ -57,9 +56,12 @@ public class Ground extends JPanel implements KeyListener {
             dirt = ImageIO.read(new File("z_dirt.png"));
         }
         catch (Exception e) {
-
+            System.out.println("Image not found!");
         }
 
+        ballMessage = new JTextField("Dropped Balls: 0");
+        nukeMessage = new JTextField("Nukes Used: 0");
+        airstrikeMessage = new JTextField("Airstrikes: 0");
 
         scaledIguana = iguana.getScaledInstance(sqSize * IGUANA_MULT, sqSize * IGUANA_MULT, Image.SCALE_SMOOTH);
         scaledEgg = egg.getScaledInstance(sqSize * EGG_MULT, sqSize * EGG_MULT, Image.SCALE_SMOOTH);
@@ -123,6 +125,10 @@ public class Ground extends JPanel implements KeyListener {
 
     @Override
     protected void paintComponent(Graphics g) {
+        if (countItem(3) == 0) {
+            endGame();
+        }
+
         super.paintComponent(g);
 
         for (int i = 0; i < sr; i++) {
@@ -147,7 +153,7 @@ public class Ground extends JPanel implements KeyListener {
 
         g.drawImage(scaledIguana, 0, (sr - IGUANA_MULT) * sqSize, this);
 
-        for (int i = sr; i < row; i++) {
+        for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 switch (grid[i][j]) {
                     case 3 -> g.drawImage(scaledEgg, (j - EGG_MULT / 2) * sqSize, (i - EGG_MULT / 2) * sqSize, this);
@@ -157,6 +163,18 @@ public class Ground extends JPanel implements KeyListener {
                 }
             }
         }
+
+        removeMessage(airstrikeMessage);
+        removeMessage(nukeMessage);
+        removeMessage(ballMessage);
+
+        airstrikeMessage = new JTextField("Airstrikes: " + airstrikes);
+        nukeMessage = new JTextField("Nukes Used: " + droppedNukes);
+        ballMessage = new JTextField("Dropped Cannonballs: " + droppedBalls);
+
+        displayMessage(950, 50, airstrikeMessage);
+        displayMessage(950, 75, nukeMessage);
+        displayMessage(950, 100, ballMessage);
     }
 
     /**
@@ -165,7 +183,7 @@ public class Ground extends JPanel implements KeyListener {
     public void reset() {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                grid[i][j] = 0;  // Initialize grid with 0 (clear cell)
+                grid[i][j] = 0;
             }
         }
 
@@ -191,7 +209,7 @@ public class Ground extends JPanel implements KeyListener {
      * Ends the game and closes the window.
      */
     public void endGame() {
-        displayMessage(new JTextField("Game Over! " + dropped + " cannonballs used."));
+        displayMessage(new JTextField("Game Over!"));
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -207,7 +225,7 @@ public class Ground extends JPanel implements KeyListener {
         Random r = new Random();
         int eggRow = -1, eggCol = -1;
         do {
-            eggRow = sr + EGG_MULT + r.nextInt(row - sr - EGG_MULT * 3);
+            eggRow = sr + EGG_MULT + r.nextInt(row - sr - EGG_MULT * 4);
             eggCol = r.nextInt(col);
         } while (grid[eggRow][eggCol] != 0);
         grid[eggRow][eggCol] = 3;  // Place egg
@@ -266,7 +284,16 @@ public class Ground extends JPanel implements KeyListener {
      * @param message the message we want to place
      */
     public void displayMessage(JTextField message) {
-        message.setBounds(150, 100, 200, 30);
+        displayMessage(150, 100, message);
+    }
+
+    /**
+     * 
+     * @param message
+     */
+
+    public void displayMessage(int xLoc, int yLoc, JTextField message) {
+        message.setBounds(xLoc, yLoc, 200, 30);
         this.add(message);
         this.revalidate();
         this.repaint();
@@ -331,6 +358,7 @@ public class Ground extends JPanel implements KeyListener {
 
             removeMessage(message);
             ref.stop();
+            ++airstrikes;
         }).start();
     }
 
@@ -340,7 +368,7 @@ public class Ground extends JPanel implements KeyListener {
             Nuke nuke = new Nuke(sr - BALL_MULT, c, this);
             JTextField message = new JTextField("Prepare For Fallout!");
             displayMessage(message);
-            for (int i = sr - BALL_MULT; i < row - (BALL_MULT / 2); i++) {
+            for (int i = 1; i < row - BALL_MULT / 4; i++) {
                 repaint();
                 try {
                     Thread.sleep(15);
@@ -371,10 +399,7 @@ public class Ground extends JPanel implements KeyListener {
             }
             removeMessage(message);
         }).start();
-        ++dropped;
-        if (countItem(3) == 0) {
-            endGame();
-        }
+        ++droppedNukes;
     }
 
     /**
@@ -386,7 +411,7 @@ public class Ground extends JPanel implements KeyListener {
             Cannonball cannonball = new Cannonball(sr - BALL_MULT, c, this);
             JTextField message = new JTextField("Fire In The Hole!");
             displayMessage(message);
-            for (int i = sr - BALL_MULT; i < row - (BALL_MULT / 2); i++) {
+            for (int i = sr - BALL_MULT; i < row - BALL_MULT / 4; i++) {
                 repaint();
                 try {
                     Thread.sleep(15);
@@ -425,10 +450,7 @@ public class Ground extends JPanel implements KeyListener {
             }
             removeMessage(message);
         }).start();
-        ++dropped;
-        if (countItem(3) == 0) {
-            endGame();
-        }
+        ++droppedBalls;
     }
 
     /**

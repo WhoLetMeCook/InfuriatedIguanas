@@ -4,7 +4,7 @@ import java.awt.event.*;
 public class Game extends JPanel {
     private JFrame frame;
     private Ground grid;
-    final int rows = 400, cols = 400, startRow = 80, sqSize = 3;
+    final int rows = 300, cols = 400, startRow = 80, sqSize = 3;
     private volatile boolean skipTutorialClicked = false;
 
     /**
