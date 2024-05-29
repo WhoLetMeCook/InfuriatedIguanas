@@ -1,5 +1,5 @@
 /**
- * @author Justin Ji, Vincent Qin
+ * @author Justin Ji
  * @version 1.0
  */
 
@@ -21,7 +21,7 @@ public class TunnelMaker {
      * Adds a hole at a random location on the grid.
      * @param grid the grid we are editing.
      */
-    public void generateTunnel(Ground grid, int val) {
+    public void generateTunnel(Ground grid) {
         final int n = grid.getRow(), m = grid.getCol();
         final int lowest = (int) ((2.0 / 3) * n);
         ArrayList<int[]> ok = new ArrayList<>();
@@ -45,7 +45,7 @@ public class TunnelMaker {
             } else if (count == MX) {
                 break;
             }
-            grid.setItem(loc[0], loc[1], val);
+            grid.setItem(loc[0], loc[1], 1);
             ++count;
             for (int i = 0; i < 4; i++) {
                 int r = loc[0] + dr[i], c = loc[1] + dc[i];

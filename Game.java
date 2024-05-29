@@ -1,10 +1,6 @@
 import javax.swing.*;
 import java.awt.event.*;
 
-/**
- * @author Justin Ji
- * @version 1.0
- */
 public class Game extends JPanel {
     private JFrame frame;
     private Ground grid;
