@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
  * @version 1.0
  */
 public class Ground extends JPanel implements KeyListener {
+    private Random r = new Random();
     private final int[][] grid;
     private final int row, sr, col;
     private final JFrame f;
@@ -133,7 +134,7 @@ public class Ground extends JPanel implements KeyListener {
 
         for (int i = 0; i < sr; i++) {
             for (int j = 0; j < col; j++) {
-                g.setColor(Color.BLUE);
+                g.setColor(new Color(118, 224, 255));
                 g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
             }
         }
@@ -343,7 +344,7 @@ public class Ground extends JPanel implements KeyListener {
             Clip ref = playSound("z_sfx_siren.wav");
     
             for (int i = 0; i < col; i += 2) {
-                dropBall(i, (i % 20 == 0));
+                if (r.nextDouble() > 0.25) dropBall(i, (i % 20 == 0));
                 try {
                     Thread.sleep(5);
                 } catch (InterruptedException e) {
@@ -425,7 +426,7 @@ public class Ground extends JPanel implements KeyListener {
 
                 cannonball.move(i, c, this);
                 if (cannonball.getDurability() <= 0 || cannonball.getRow() >= row - 30) {
-                    t.explode(this, i, c, 7);
+                    t.explode(this, i, c, r.nextInt(4)+3);
                     if (play) playSound("z_sfx_explosion.wav");
                     if ((i - BALL_MULT + 2 >= 0 && i - BALL_MULT + 2 < row) &&
                         (c - BALL_MULT / 2 - 1 >= 0 && c - BALL_MULT / 2 - 1 < col)) {
