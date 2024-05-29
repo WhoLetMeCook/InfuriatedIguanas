@@ -18,6 +18,13 @@ public class Ground extends JPanel implements KeyListener {
     private final Image scaledIguana, scaledEgg, scaledBall, scaledExplosion;
     int dropped = 0;
 
+    /**
+     * The constructor for the class.
+     * @param r # of rows
+     * @param c # of columns
+     * @param startRow index of row where the "ground" starts
+     * @param sqSize size of each square
+     */
     public Ground(int r, int c, int startRow, int sqSize) {
         row = r;
         sr = startRow;
@@ -75,6 +82,22 @@ public class Ground extends JPanel implements KeyListener {
         f.requestFocusInWindow();
     }
 
+    /**
+     * "Getter" method.
+     * @return the # of rows
+     */
+    public int getRow() {
+        return row;
+    }
+
+    /**
+     * "Getter" method.
+     * @return the # of columns
+     */
+    public int getCol() {
+        return col;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -108,14 +131,9 @@ public class Ground extends JPanel implements KeyListener {
         }
     }
 
-    public int getRow() {
-        return row;
-    }
-
-    public int getCol() {
-        return col;
-    }
-
+    /**
+     * Resets the grid for the next game.
+     */
     public void reset() {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
@@ -133,11 +151,17 @@ public class Ground extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * Starts the game by resetting the grid.
+     */
     public void startGame() {
         reset();
         repaint();
     }
 
+    /**
+     * Ends the game and closes the window.
+     */
     public void endGame() {
         displayMessage(new JTextField("Game Over! " + dropped + " cannonballs used."));
         try {
@@ -148,6 +172,9 @@ public class Ground extends JPanel implements KeyListener {
         f.dispatchEvent(new WindowEvent(f, WindowEvent.WINDOW_CLOSING));
     }
 
+    /**
+     * Places an egg at a random, unoccupied position.
+     */
     private void placeEgg() {
         Random r = new Random();
         int eggRow, eggCol;
@@ -158,14 +185,30 @@ public class Ground extends JPanel implements KeyListener {
         grid[eggRow][eggCol] = 3;  // Place egg
     }
 
+    /**
+     * Sets the item at grid[r][c] to v. Later,
+     * the grid will be re-rendered to correctly display this change.
+     * @param r row indice
+     * @param c column indice
+     * @param v value
+     */
     public void setItem(int r, int c, int v) {
         grid[r][c] = v;
     }
 
+    /**
+     * @param r row indice
+     * @param c column indice
+     * @return value at grid[r][c]
+     */
     public int getItem(int r, int c) {
         return grid[r][c];
     }
 
+    /**
+     * @param item the item we are looking for, in terms of # of occurences
+     * @return number of times this item shows up.
+     */
     public int countItem(int item) {
         int count = 0;
         for (int[] row : grid) {
@@ -178,6 +221,9 @@ public class Ground extends JPanel implements KeyListener {
         return count;
     }
 
+    /**
+     * Testing method. Used to display the internal grid.
+     */
     public void displayGrid() {
         for (int[] row : grid) {
             for (int cell : row) {
@@ -187,14 +233,10 @@ public class Ground extends JPanel implements KeyListener {
         }
     }
 
-    public void showGrid() {
-        repaint();
-    }
-
-    public Component getItemComponent(int r, int c) {
-        return objects[r][c];
-    }
-
+    /**
+     * Displays a message onto the JPanel
+     * @param message the message we want to place
+     */
     public void displayMessage(JTextField message) {
         message.setBounds(150, 100, 200, 30);
         this.add(message);
@@ -202,12 +244,19 @@ public class Ground extends JPanel implements KeyListener {
         this.repaint();
     }
     
+    /**
+     * Removes the message given.
+     * @param message item we want to remove
+     */
     public void removeMessage(JTextField message) {
         this.remove(message);
         this.revalidate();
         this.repaint();
     }
 
+    /**
+     * Simulates a series of explosions on the surface of the ground.
+     */
     public void airstrike() {
         new Thread(() -> {
             JTextField message = new JTextField("Airstrike Inbound!");
@@ -231,6 +280,10 @@ public class Ground extends JPanel implements KeyListener {
         }).start();
     }
 
+    /**
+     * Drops a cannonball onto the grid, wit this object detonating later.
+     * @param c the column indice of where we drop it (the row is fixed)
+     */
     public void dropBall(int c) {
         new Thread(() -> {
             Cannonball cannonball = new Cannonball(sr - BALL_MULT, c, this);
@@ -273,6 +326,11 @@ public class Ground extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * Renders an explosion at location (row, col)
+     * @param row the given row
+     * @param col the given column
+     */
     private void displayExplosion(int row, int col) {
         new Thread(() -> {
             if (row >= 0 && row < this.row && col >= 0 && col < this.col) {

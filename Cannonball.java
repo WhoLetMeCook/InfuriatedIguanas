@@ -22,43 +22,42 @@ public class Cannonball extends Component implements Actor {
     }
 
     /**
-     * returns the row that the cannonball is on
-     * @return the row
+     * @return the row the object is at
      */
     public int getRow() {
         return row;
     }
 
     /**
-     * returns the col that the cannonball is on
-     * @return the col
+     * @return the column the object is at
      */
     public int getCol() {
         return col;
     }
 
     /**
-     * returns the durability of the cannonball
-     * @return durability
+     * @return durability of the cannonball
      */
     public int getDurability() {
         return durability;
     }
 
     /**
-     * decreases durability by amount
      * @param amount to decrease durability by
      */
     public void damage(int amount) {
-        int dx;
+        int dx = -1;
         if (amount == 0) dx = 1;
         else if (amount == 1) dx = 0;
-        else dx = 10;
+        else if (amount == 2) dx = durability;
         durability -= dx;
     }
 
     /**
-     * moves the cannonball on the grid, leaves air in its trail
+     * Moves the cannonball to (r, c)
+     * @param r the row
+     * @param c the column
+     * @param grid the grid we are using
      */
     public void move(int r, int c, Ground grid) {
         grid.setItem(row, col, 1);

@@ -7,6 +7,10 @@ public class Game extends JPanel {
     final int rows = 400, cols = 400, startRow = 80, sqSize = 3;
     private volatile boolean skipTutorialClicked = false;
 
+    /**
+     * Displays a message onto the JPanel
+     * @param message the message we want to place
+     */
     public void displayMessage(JTextField message) {
         message.setBounds(600, 500, 300, 50);
         this.add(message);
@@ -14,12 +18,19 @@ public class Game extends JPanel {
         this.repaint();
     }
 
+    /**
+     * Removes the message given.
+     * @param message item we want to remove
+     */
     public void removeMessage(JTextField message) {
         this.remove(message);
         this.revalidate();
         this.repaint();
     }
 
+    /**
+     * Sets up the loading screen, to allow the player to launch the game.
+     */
     public void setLoadingScreen() {
         frame = new JFrame("Infuriated Iguanas");
         frame.setSize(1000, 1000);
