@@ -1,5 +1,5 @@
 /**
- * @author Justin Ji
+ * @author Justin Ji, Vincent Qin
  * @version 1.0
  */
 

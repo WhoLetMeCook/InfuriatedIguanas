@@ -3,6 +3,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
 
+import java.io.File;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
+/**
+ * @author Vincent Qin, Justin Ji, I-Chen Chou
+ * @version 1.0
+ */
 public class Ground extends JPanel implements KeyListener {
     private final int[][] grid;
     private final int row, sr, col;
@@ -177,9 +186,9 @@ public class Ground extends JPanel implements KeyListener {
      */
     private void placeEgg() {
         Random r = new Random();
-        int eggRow, eggCol;
+        int eggRow = -1, eggCol = -1;
         do {
-            eggRow = sr + r.nextInt(row - sr - EGG_MULT * 3);
+            eggRow = sr + EGG_MULT + r.nextInt(row - sr - EGG_MULT * 3);
             eggCol = r.nextInt(col);
         } while (grid[eggRow][eggCol] != 0);
         grid[eggRow][eggCol] = 3;  // Place egg
@@ -255,14 +264,33 @@ public class Ground extends JPanel implements KeyListener {
     }
 
     /**
+     * Plays the sound indicated by the file name.
+     * @param fileName location of file
+     */
+    Clip playSound(String fileName) {
+        try {
+            File loc = new File(fileName);
+            AudioInputStream in = AudioSystem.getAudioInputStream(loc.toURI().toURL());
+            Clip play = AudioSystem.getClip();
+            play.open(in);
+            play.start();
+            return play;
+        } catch (Exception e) {
+            System.out.println("Sound not found!");
+            return null;
+        }
+    }
+
+    /**
      * Simulates a series of explosions on the surface of the ground.
      */
     public void airstrike() {
         new Thread(() -> {
             JTextField message = new JTextField("Airstrike Inbound!");
             displayMessage(message);
+            Clip ref = playSound("z_sfx_siren.wav");
     
-            for (int i = 0; i < col; i++) {
+            for (int i = 0; i < col; i += 2) {
                 dropBall(i);
                 try {
                     Thread.sleep(5);
@@ -277,6 +305,7 @@ public class Ground extends JPanel implements KeyListener {
             }
 
             removeMessage(message);
+            ref.stop();
         }).start();
     }
 
@@ -304,11 +333,11 @@ public class Ground extends JPanel implements KeyListener {
                 cannonball.move(i, c, this);
                 if (cannonball.getDurability() <= 0 || cannonball.getRow() >= row - 30) {
                     t.explode(this, i, c, 7);
-
                     if ((i - BALL_MULT + 2 >= 0 && i - BALL_MULT + 2 < row) &&
                         (c - BALL_MULT / 2 - 1 >= 0 && c - BALL_MULT / 2 - 1 < col)) {
                         displayExplosion(i - BALL_MULT + 2, c - BALL_MULT / 2 - 1);
                     }
+                    playSound("z_sfx_explosion.wav");
                     return;
                 }
                 cannonball.move(i + 1, c, this);
