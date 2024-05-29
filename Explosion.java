@@ -1,10 +1,10 @@
 /**
  * @author I Chen Chou
  * @version 5/7/24
- * Represents an egg class (the target of the player)
+ * Represents an explosive (the target of the player)
  */
 import java.awt.*;
-public class Egg extends Actor {
+public class Explosion extends Actor {
 
     /**
      * constructs an egg class with its position on the grid
@@ -15,7 +15,7 @@ public class Egg extends Actor {
      * @param sqSize size of square
      * @param i image of an egg
      */
-    public Egg(int r, int c, Ground grid, Image i, int s) {
+    public Explosion(int r, int c, Ground grid, Image i, int s) {
         super(r, c, grid, i, s);
     }
 
