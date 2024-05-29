@@ -20,14 +20,15 @@ public class Ground extends JPanel implements KeyListener {
     private final JFrame f;
     private final Component[][] objects;
     private final TunnelMaker t;
-    private final Image iguana, egg, ball, explosion;
+    private final Image iguana, egg, ball, explosion, nuke;
     private BufferedImage dirt;
     private final int sqSize;
     private final int EGG_MULT = 10;
     private final int BALL_MULT = 12;
     private final int IGUANA_MULT = 60;
+    private final int NUKE_MULT = 20;
     private boolean droppingBall = false;
-    private final Image scaledIguana, scaledEgg, scaledBall, scaledExplosion;
+    private final Image scaledIguana, scaledEgg, scaledBall, scaledExplosion, scaledNuke;
     int dropped = 0;
 
     /**
@@ -50,6 +51,7 @@ public class Ground extends JPanel implements KeyListener {
         egg = new ImageIcon("z_snake_egg.png").getImage();
         ball = new ImageIcon("z_cannonball.png").getImage();
         explosion = new ImageIcon("z_explosion.png").getImage();
+        nuke = new ImageIcon("z_nuke.png").getImage();
         dirt = null;
         try {
             dirt = ImageIO.read(new File("z_dirt.png"));
@@ -63,6 +65,7 @@ public class Ground extends JPanel implements KeyListener {
         scaledEgg = egg.getScaledInstance(sqSize * EGG_MULT, sqSize * EGG_MULT, Image.SCALE_SMOOTH);
         scaledBall = ball.getScaledInstance(sqSize * BALL_MULT, sqSize * BALL_MULT, Image.SCALE_SMOOTH);
         scaledExplosion = explosion.getScaledInstance(sqSize * BALL_MULT * 2, sqSize * BALL_MULT * 2, Image.SCALE_SMOOTH);
+        scaledNuke = nuke.getScaledInstance(sqSize * NUKE_MULT, sqSize * NUKE_MULT, Image.SCALE_SMOOTH);
 
         setLayout(null);
         f = new JFrame("Infuriated Iguanas");
@@ -150,6 +153,7 @@ public class Ground extends JPanel implements KeyListener {
                     case 3 -> g.drawImage(scaledEgg, (j - EGG_MULT / 2) * sqSize, (i - EGG_MULT / 2) * sqSize, this);
                     case 4 -> g.drawImage(scaledBall, (j - BALL_MULT / 2) * sqSize, (i - BALL_MULT / 2) * sqSize, this);
                     case 5 -> g.drawImage(scaledExplosion, j * sqSize - BALL_MULT, i * sqSize, this);
+                    case 6 -> g.drawImage(scaledNuke, (j - NUKE_MULT / 2) * sqSize, (i - NUKE_MULT / 2) * sqSize, this);
                 }
             }
         }
@@ -330,6 +334,49 @@ public class Ground extends JPanel implements KeyListener {
         }).start();
     }
 
+    public void dropNuke() {
+        new Thread(() -> {
+            final int c = col / 2;
+            Nuke nuke = new Nuke(sr - BALL_MULT, c, this);
+            JTextField message = new JTextField("Prepare For Fallout!");
+            displayMessage(message);
+            for (int i = sr - BALL_MULT; i < row - (BALL_MULT / 2); i++) {
+                repaint();
+                try {
+                    Thread.sleep(15);
+                } catch (InterruptedException e) {
+                    return;
+                }
+
+                if (i >= sr && c >= 0 && c + 1 < col) {
+                    nuke.damage(grid[i][c + 1]);
+                }
+
+                nuke.move(i, c, this);
+                if (nuke.getDurability() <= 0 || nuke.getRow() >= row - 30) {
+                    t.explode(this, i, c, 100);
+                    playSound("z_sfx_explosion.wav");
+                    if ((i - BALL_MULT + 2 >= 0 && i - BALL_MULT + 2 < row) &&
+                        (c - BALL_MULT / 2 - 1 >= 0 && c - BALL_MULT / 2 - 1 < col)) {
+                        displayExplosion(i - BALL_MULT + 2, c - BALL_MULT / 2 - 1);
+                    }
+                    break;
+                }
+                nuke.move(i + 1, c, this);
+            }
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                return;
+            }
+            removeMessage(message);
+        }).start();
+        ++dropped;
+        if (countItem(3) == 0) {
+            endGame();
+        }
+    }
+
     /**
      * Drops a cannonball onto the grid, wit this object detonating later.
      * @param c the column indice of where we drop it (the row is fixed)
@@ -409,6 +456,8 @@ public class Ground extends JPanel implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_A) {
             airstrike();
+        } else if (e.getKeyCode() == KeyEvent.VK_N) {
+            dropNuke();
         }
     }
 

@@ -41,7 +41,8 @@ public class Game extends JPanel {
 
         String[] messages = new String[]{
             "Hi there!", "Infuriated Iguanas is a game where you are an iguana trying to destroy eggs.",
-            "To launch a standard in game bomb, click the screen.", "To launch an airstrike, press 'A' on your keyboard."
+            "To launch a standard in game bomb, click the screen.", "To launch an airstrike, press 'A' on your keyboard.",
+            "To launch a thermonuclear explosion, press 'N'."
         };
 
         JButton skipTutorial = new JButton("Skip Tutorial");

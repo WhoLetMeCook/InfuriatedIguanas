@@ -33,6 +33,14 @@ public class Cannonball extends Component implements Actor {
         return col;
     }
 
+    public void setRow(int nr) {
+        row = nr;
+    }
+
+    public void setCol(int nc) {
+        col = nc;
+    }
+
     /**
      * @return durability of the cannonball
      */
