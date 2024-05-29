@@ -2,18 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
-import java.io.File;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 
-/**
- * @author Vincent Qin, Justin Ji, I-Chen Chou
- * @version 1.0
- */
 public class Ground extends JPanel implements KeyListener {
     private final int[][] grid;
     private final int row, sr, col;
@@ -21,7 +10,6 @@ public class Ground extends JPanel implements KeyListener {
     private final Component[][] objects;
     private final TunnelMaker t;
     private final Image iguana, egg, ball, explosion;
-    private BufferedImage dirt;
     private final int sqSize;
     private final int EGG_MULT = 10;
     private final int BALL_MULT = 12;
@@ -50,14 +38,6 @@ public class Ground extends JPanel implements KeyListener {
         egg = new ImageIcon("z_snake_egg.png").getImage();
         ball = new ImageIcon("z_cannonball.png").getImage();
         explosion = new ImageIcon("z_explosion.png").getImage();
-        dirt = null;
-        try {
-            dirt = ImageIO.read(new File("z_dirt.png"));
-        }
-        catch (Exception e) {
-
-        }
-
 
         scaledIguana = iguana.getScaledInstance(sqSize * IGUANA_MULT, sqSize * IGUANA_MULT, Image.SCALE_SMOOTH);
         scaledEgg = egg.getScaledInstance(sqSize * EGG_MULT, sqSize * EGG_MULT, Image.SCALE_SMOOTH);
@@ -77,7 +57,7 @@ public class Ground extends JPanel implements KeyListener {
                 droppingBall = true;
                 int xc = e.getX() / sqSize;
                 if (xc >= 0) {
-                    dropBall(xc, true);
+                    dropBall(xc);
                 }
             }
 
@@ -91,7 +71,7 @@ public class Ground extends JPanel implements KeyListener {
                 if (droppingBall) {
                     int xc = e.getX() / sqSize;
                     if (xc >= 0) {
-                        dropBall(xc, true);
+                        dropBall(xc);
                     }
                 }
             }
@@ -128,15 +108,11 @@ public class Ground extends JPanel implements KeyListener {
                 g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
             }
         }
-        
+
+        g.setColor(new Color(139, 69, 19)); // brown
         for (int i = sr; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (grid[i][j] == 0 || grid[i][j] == 3 || grid[i][j] == 4) {
-                    int rgb = dirt.getRGB(i % 16, j % 16);
-                    g.setColor(new Color(rgb));
-                    g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
-                } else if (grid[i][j] == 2) {
-                    g.setColor(Color.GRAY);
                     g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
                 }
             }
@@ -167,7 +143,7 @@ public class Ground extends JPanel implements KeyListener {
 
         int tunnels = (row + col) / 10;
         for (int i = 0; i < tunnels; i++) {
-            t.generateTunnel(this, (i % 2 == 0 ? 1 : 2));
+            t.generateTunnel(this);
         }
 
         for (int i = 0; i < 100; i++) {
@@ -201,9 +177,9 @@ public class Ground extends JPanel implements KeyListener {
      */
     private void placeEgg() {
         Random r = new Random();
-        int eggRow = -1, eggCol = -1;
+        int eggRow, eggCol;
         do {
-            eggRow = sr + EGG_MULT + r.nextInt(row - sr - EGG_MULT * 3);
+            eggRow = sr + r.nextInt(row - sr - EGG_MULT * 3);
             eggCol = r.nextInt(col);
         } while (grid[eggRow][eggCol] != 0);
         grid[eggRow][eggCol] = 3;  // Place egg
@@ -279,40 +255,15 @@ public class Ground extends JPanel implements KeyListener {
     }
 
     /**
-     * Plays the sound indicated by the file name.
-     * @param fileName location of file
-     */
-    Clip playSound(String fileName) {
-        final float volume = 0.3f;
-        try {
-            File file = new File(fileName);
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
-            gainControl.setValue(dB);
-
-            clip.start();
-            return clip;
-        } catch (Exception e) {
-            System.out.println("Sound not found!");
-            return null;
-        }
-    }
-
-    /**
      * Simulates a series of explosions on the surface of the ground.
      */
     public void airstrike() {
         new Thread(() -> {
             JTextField message = new JTextField("Airstrike Inbound!");
             displayMessage(message);
-            Clip ref = playSound("z_sfx_siren.wav");
     
-            for (int i = 0; i < col; i += 2) {
-                dropBall(i, (i % 20 == 0));
+            for (int i = 0; i < col; i++) {
+                dropBall(i);
                 try {
                     Thread.sleep(5);
                 } catch (InterruptedException e) {
@@ -326,7 +277,6 @@ public class Ground extends JPanel implements KeyListener {
             }
 
             removeMessage(message);
-            ref.stop();
         }).start();
     }
 
@@ -334,10 +284,10 @@ public class Ground extends JPanel implements KeyListener {
      * Drops a cannonball onto the grid, wit this object detonating later.
      * @param c the column indice of where we drop it (the row is fixed)
      */
-    public void dropBall(int c, boolean play) {
+    public void dropBall(int c) {
         new Thread(() -> {
             Cannonball cannonball = new Cannonball(sr - BALL_MULT, c, this);
-            JTextField message = new JTextField("Fire In The Hole!");
+            JTextField message = new JTextField("Airstrike Inbound!");
             displayMessage(message);
             for (int i = sr - BALL_MULT; i < row - (BALL_MULT / 2); i++) {
                 repaint();
@@ -354,27 +304,19 @@ public class Ground extends JPanel implements KeyListener {
                 cannonball.move(i, c, this);
                 if (cannonball.getDurability() <= 0 || cannonball.getRow() >= row - 30) {
                     t.explode(this, i, c, 7);
-                    if (play) playSound("z_sfx_explosion.wav");
+
                     if ((i - BALL_MULT + 2 >= 0 && i - BALL_MULT + 2 < row) &&
                         (c - BALL_MULT / 2 - 1 >= 0 && c - BALL_MULT / 2 - 1 < col)) {
                         displayExplosion(i - BALL_MULT + 2, c - BALL_MULT / 2 - 1);
                     }
-                    break;
+                    return;
                 }
                 cannonball.move(i + 1, c, this);
             }
 
-            /*
             if ((row - BALL_MULT >= 0 && row - BALL_MULT < this.row) && (c >= 0 && c < this.col)) {
                 t.explode(this, row - BALL_MULT, c, 7);
                 displayExplosion(row - BALL_MULT, c);
-            }
-            */
-            
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                return;
             }
             removeMessage(message);
         }).start();
