@@ -1,8 +1,6 @@
-
 /**
  * @author Vincent Qin
- * @author 5/7/24
- * Represents the ammunition of the player to destroy the eggs (GRR)
+ * @version 1.0
  */
 import java.awt.*;
 public class Cannonball extends Component implements Actor {
