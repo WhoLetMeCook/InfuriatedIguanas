@@ -7,6 +7,7 @@ import java.io.File;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 /**
  * @author Vincent Qin, Justin Ji, I-Chen Chou
@@ -66,7 +67,7 @@ public class Ground extends JPanel implements KeyListener {
                 droppingBall = true;
                 int xc = e.getX() / sqSize;
                 if (xc >= 0) {
-                    dropBall(xc);
+                    dropBall(xc, true);
                 }
             }
 
@@ -80,7 +81,7 @@ public class Ground extends JPanel implements KeyListener {
                 if (droppingBall) {
                     int xc = e.getX() / sqSize;
                     if (xc >= 0) {
-                        dropBall(xc);
+                        dropBall(xc, true);
                     }
                 }
             }
@@ -271,13 +272,19 @@ public class Ground extends JPanel implements KeyListener {
      * @param fileName location of file
      */
     Clip playSound(String fileName) {
+        final float volume = 0.3f;
         try {
-            File loc = new File(fileName);
-            AudioInputStream in = AudioSystem.getAudioInputStream(loc.toURI().toURL());
-            Clip play = AudioSystem.getClip();
-            play.open(in);
-            play.start();
-            return play;
+            File file = new File(fileName);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
+            gainControl.setValue(dB);
+
+            clip.start();
+            return clip;
         } catch (Exception e) {
             System.out.println("Sound not found!");
             return null;
@@ -294,7 +301,7 @@ public class Ground extends JPanel implements KeyListener {
             Clip ref = playSound("z_sfx_siren.wav");
     
             for (int i = 0; i < col; i += 2) {
-                dropBall(i);
+                dropBall(i, (i % 20 == 0));
                 try {
                     Thread.sleep(5);
                 } catch (InterruptedException e) {
@@ -316,7 +323,7 @@ public class Ground extends JPanel implements KeyListener {
      * Drops a cannonball onto the grid, wit this object detonating later.
      * @param c the column indice of where we drop it (the row is fixed)
      */
-    public void dropBall(int c) {
+    public void dropBall(int c, boolean play) {
         new Thread(() -> {
             Cannonball cannonball = new Cannonball(sr - BALL_MULT, c, this);
             JTextField message = new JTextField("Fire In The Hole!");
@@ -336,19 +343,27 @@ public class Ground extends JPanel implements KeyListener {
                 cannonball.move(i, c, this);
                 if (cannonball.getDurability() <= 0 || cannonball.getRow() >= row - 30) {
                     t.explode(this, i, c, 7);
+                    if (play) playSound("z_sfx_explosion.wav");
                     if ((i - BALL_MULT + 2 >= 0 && i - BALL_MULT + 2 < row) &&
                         (c - BALL_MULT / 2 - 1 >= 0 && c - BALL_MULT / 2 - 1 < col)) {
                         displayExplosion(i - BALL_MULT + 2, c - BALL_MULT / 2 - 1);
                     }
-                    playSound("z_sfx_explosion.wav");
-                    return;
+                    break;
                 }
                 cannonball.move(i + 1, c, this);
             }
 
+            /*
             if ((row - BALL_MULT >= 0 && row - BALL_MULT < this.row) && (c >= 0 && c < this.col)) {
                 t.explode(this, row - BALL_MULT, c, 7);
                 displayExplosion(row - BALL_MULT, c);
+            }
+            */
+            
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                return;
             }
             removeMessage(message);
         }).start();
