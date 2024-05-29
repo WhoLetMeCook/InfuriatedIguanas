@@ -117,11 +117,14 @@ public class Ground extends JPanel implements KeyListener {
                 g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
             }
         }
-
-        g.setColor(new Color(139, 69, 19)); // brown
+        
         for (int i = sr; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (grid[i][j] == 0 || grid[i][j] == 3 || grid[i][j] == 4) {
+                    g.setColor(new Color(139, 69, 19));
+                    g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
+                } else if (grid[i][j] == 2) {
+                    g.setColor(Color.GRAY);
                     g.fillRect(j * sqSize, i * sqSize, sqSize, sqSize);
                 }
             }
@@ -152,7 +155,7 @@ public class Ground extends JPanel implements KeyListener {
 
         int tunnels = (row + col) / 10;
         for (int i = 0; i < tunnels; i++) {
-            t.generateTunnel(this);
+            t.generateTunnel(this, (i % 2 == 0 ? 1 : 2));
         }
 
         for (int i = 0; i < 100; i++) {
@@ -316,7 +319,7 @@ public class Ground extends JPanel implements KeyListener {
     public void dropBall(int c) {
         new Thread(() -> {
             Cannonball cannonball = new Cannonball(sr - BALL_MULT, c, this);
-            JTextField message = new JTextField("Airstrike Inbound!");
+            JTextField message = new JTextField("Fire In The Hole!");
             displayMessage(message);
             for (int i = sr - BALL_MULT; i < row - (BALL_MULT / 2); i++) {
                 repaint();
