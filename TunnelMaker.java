@@ -70,6 +70,9 @@ public class TunnelMaker {
      * @param RADIUS
      */
     public void explode(int row, int col, int RADIUS) {
+        explode(row, col, RADIUS, false);
+    } 
+    public void explode(int row, int col, int RADIUS, boolean isNuke) {
         Deque<int[]> queue = new LinkedList<>();
         queue.addLast(new int[]{row, col});
         int[] dr = new int[]{1, -1, 0, 0};
@@ -79,11 +82,18 @@ public class TunnelMaker {
         Set<String> visited = new HashSet<>();
         visited.add(row + "," + col);
         
+        int stoneExploded = 0;
+        final int MAX_STONE = (int) (Math.random() * 6);
         while (!queue.isEmpty()) {
             int[] cur = queue.removeFirst();
             int curRow = cur[0], curCol = cur[1];
+            if (!isNuke && stoneExploded >= MAX_STONE) {
+                continue;
+            }
+            if (!isNuke && grid.getItem(cur[0], cur[1]) == 2) {
+                ++stoneExploded;
+            }
             grid.setItem(curRow, curCol, 1);
-            
             for (int i = 0; i < 4; i++) {
                 int r = curRow + dr[i], c = curCol + dc[i];
                 double distance = Math.sqrt((r - row) * (r - row) + (c - col) * (c - col));
@@ -94,5 +104,5 @@ public class TunnelMaker {
                 }
             }
         }
-    } 
+    }
 }

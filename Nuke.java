@@ -11,6 +11,11 @@ public class Nuke extends Cannonball {
         super(row, col, grid);
     }
 
+    /**
+     * @param r the row of the new location
+     * @param c the col of the new location
+     * @param grid the ground board we are working with
+     */
     public void move(int r, int c, Ground grid) {
         grid.setItem(getRow(), getCol(), 1);
         setRow(r);

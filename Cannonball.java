@@ -71,4 +71,11 @@ public class Cannonball extends Component implements Actor {
         col = c;
         grid.setItem(row, col, 4);
     }
+
+    /**
+     * Removes the cannonball from the grid.
+     */
+    public void remove(Ground grid) {
+        grid.setItem(row, col, 1);
+    }
 }

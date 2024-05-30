@@ -41,8 +41,8 @@ public class Game extends JPanel {
 
         String[] messages = new String[]{
             "Hi there!", "Infuriated Iguanas is a game where you are an iguana trying to destroy eggs.",
-            "To launch a standard in game bomb, click the screen.", "To launch an airstrike, press 'A' on your keyboard.",
-            "To launch a thermonuclear explosion, press 'N'."
+            "To launch a standard in game bomb, click the screen.", "To launch an airstrike, press 'A' on your keyboard.", 
+            "There is a 5 second cooldown for airstrikes", "To launch a thermonuclear explosion, press 'N'.", "Good Luck!"
         };
 
         JButton skipTutorial = new JButton("Skip Tutorial");
@@ -88,11 +88,9 @@ public class Game extends JPanel {
      */
     public void showMenu() {
         JButton limitedShots = new JButton("Limited Shots Mode");
-        JButton timeLimit = new JButton("Time Limit Mode");
+        JButton infiniteShots = new JButton("Sandbox Mode");
 
         limitedShots.setBounds(400, 400, 200, 50);
-        timeLimit.setBounds(400, 500, 200, 50);
-
         limitedShots.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -100,15 +98,16 @@ public class Game extends JPanel {
             }
         });
 
-        timeLimit.addActionListener(new ActionListener() {
+        infiniteShots.setBounds(400, 450, 200, 50);
+        infiniteShots.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                startGame("Time Limit");
+                startGame("Infinite Shots");
             }
         });
 
         this.add(limitedShots);
-        this.add(timeLimit);
+        this.add(infiniteShots);
         this.revalidate();
         this.repaint();
     }
