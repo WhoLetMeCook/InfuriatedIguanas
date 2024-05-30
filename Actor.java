@@ -1,4 +1,3 @@
-
 /**
  * @author Vincent Qin
  * @version 5/7/24
@@ -23,5 +22,6 @@ public interface Actor {
      * @param c col
      * @param grid grid to move stuff to
      */
+    
     public abstract void move(int r, int c, Ground grid);
 }

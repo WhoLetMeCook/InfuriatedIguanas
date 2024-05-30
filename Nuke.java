@@ -1,6 +1,10 @@
 /**
  * @author Justin Ji
  * @version 1.0
+ * 
+ * Represents a nuke on the board, to make 
+ * the implementation of the dropNuke() method 
+ * simpler.
  */
 public class Nuke extends Cannonball {
     public Nuke(int row, int col, Ground grid) {
