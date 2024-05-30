@@ -80,17 +80,49 @@ public class Game extends JPanel {
         this.revalidate();
         this.repaint();
 
-        JButton start = new JButton("Start Game");
-        start.addActionListener(new ActionListener() {
+        showMenu();
+    }
+
+    /**
+     * Displays the game mode selection menu.
+     */
+    public void showMenu() {
+        JButton limitedShots = new JButton("Limited Shots Mode");
+        JButton timeLimit = new JButton("Time Limit Mode");
+
+        limitedShots.setBounds(400, 400, 200, 50);
+        timeLimit.setBounds(400, 500, 200, 50);
+
+        limitedShots.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                grid = new Ground(rows, cols, startRow, sqSize);
-                grid.startGame();
+                startGame("Limited Shots");
             }
         });
-        this.add(start);
+
+        timeLimit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startGame("Time Limit");
+            }
+        });
+
+        this.add(limitedShots);
+        this.add(timeLimit);
         this.revalidate();
         this.repaint();
+    }
+
+    /**
+     * Starts the game with the selected mode.
+     * @param mode the game mode selected
+     */
+    public void startGame(String mode) {
+        this.removeAll();
+        this.revalidate();
+        this.repaint();
+        grid = new Ground(rows, cols, startRow, sqSize, mode);
+        grid.startGame();
     }
 
     public static void main(String[] args) {

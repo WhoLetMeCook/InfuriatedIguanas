@@ -11,8 +11,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 /**
- * @author Vincent Qin, Justin Ji, I-Chen Chou
- * @version 1.0
+ * Represents the game ground where the game elements interact.
  */
 public class Ground extends JPanel implements KeyListener {
     private Random r = new Random();
@@ -31,6 +30,9 @@ public class Ground extends JPanel implements KeyListener {
     private final Image scaledIguana, scaledEgg, scaledBall, scaledExplosion, scaledNuke;
     private int droppedBalls = 0, droppedNukes = 0, airstrikes = 0;
     private JTextField ballMessage, nukeMessage, airstrikeMessage;
+    private final String gameMode;
+    private int remainingShots;
+    private Timer timer;
 
     /**
      * The constructor for the class.
@@ -38,12 +40,14 @@ public class Ground extends JPanel implements KeyListener {
      * @param c # of columns
      * @param startRow index of row where the "ground" starts
      * @param sqSize size of each square
+     * @param gameMode selected game mode
      */
-    public Ground(int r, int c, int startRow, int sqSize) {
+    public Ground(int r, int c, int startRow, int sqSize, String gameMode) {
         row = r;
         sr = startRow;
         col = c;
         this.sqSize = sqSize;
+        this.gameMode = gameMode;
         grid = new int[r][c];
         t = new TunnelMaker((row * col) / 7, 0.425);
 
@@ -55,8 +59,7 @@ public class Ground extends JPanel implements KeyListener {
         dirt = null;
         try {
             dirt = ImageIO.read(new File("z_dirt.png"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Image not found!");
         }
 
@@ -80,10 +83,23 @@ public class Ground extends JPanel implements KeyListener {
 
         f.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                droppingBall = true;
-                int xc = e.getX() / sqSize;
-                if (xc >= 0) {
-                    dropBall(xc, true);
+                if (gameMode.equals("Limited Shots")) {
+                    if (remainingShots > 0) {
+                        droppingBall = true;
+                        int xc = e.getX() / sqSize;
+                        if (xc >= 0) {
+                            dropBall(xc, true);
+                        }
+                        remainingShots--;
+                    } else {
+                        endGame();
+                    }
+                } else {
+                    droppingBall = true;
+                    int xc = e.getX() / sqSize;
+                    if (xc >= 0) {
+                        dropBall(xc, true);
+                    }
                 }
             }
 
@@ -106,7 +122,24 @@ public class Ground extends JPanel implements KeyListener {
         f.addKeyListener(this);
         f.setFocusable(true);
         f.requestFocusInWindow();
+
+        if (gameMode.equals("Limited Shots")) {
+            remainingShots = 50; // Example value for limited shots
+        } else {
+            int timeLimit = 60 * 1000; // 1 minute time limit
+            timer = new Timer(timeLimit, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    endGame();
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
+        }
+
+        startGame();
     }
+
 
     /**
      * "Getter" method.
@@ -206,17 +239,15 @@ public class Ground extends JPanel implements KeyListener {
         repaint();
     }
 
-    /**
-     * Ends the game and closes the window.
+/**
+     * Ends the game and shows a game over message.
      */
     public void endGame() {
-        displayMessage(new JTextField("Game Over!"));
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            return;
+        if (timer != null) {
+            timer.stop();
         }
-        f.dispatchEvent(new WindowEvent(f, WindowEvent.WINDOW_CLOSING));
+        JOptionPane.showMessageDialog(f, "Game Over!");
+        f.dispose();
     }
 
     /**
