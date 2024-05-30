@@ -63,15 +63,19 @@ public class TunnelMaker {
     }
     
     /**
-     * 
-     * @param grid
-     * @param row
-     * @param col
-     * @param RADIUS
+     * The more specific version of explode, for cannonballs.
      */
     public void explode(int row, int col, int RADIUS) {
         explode(row, col, RADIUS, false);
     } 
+
+    /**
+     * The more generic version of explode. Works for nukes.
+     * @param row the row of the explosion.
+     * @param col the column of the explosion.
+     * @param RADIUS the radius of the explosion.
+     * @param isNuke checking if this explosion is a nuke (for stone collision handling)
+     */
     public void explode(int row, int col, int RADIUS, boolean isNuke) {
         Deque<int[]> queue = new LinkedList<>();
         queue.addLast(new int[]{row, col});

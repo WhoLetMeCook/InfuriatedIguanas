@@ -147,6 +147,9 @@ public class Ground extends JPanel implements KeyListener {
         return col;
     }
 
+    /**
+     * Paints the component, so repaint() works.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         if (countItem(3) == 0 || remainingShots <= 0) {

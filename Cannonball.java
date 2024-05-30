@@ -33,10 +33,18 @@ public class Cannonball extends Component implements Actor {
         return col;
     }
 
+    /** 
+     * Sets the row value. 
+     * @param nr the new row.
+     */
     public void setRow(int nr) {
         row = nr;
     }
 
+    /** 
+     * Sets the row value. 
+     * @param nc the new col.
+     */
     public void setCol(int nc) {
         col = nc;
     }
